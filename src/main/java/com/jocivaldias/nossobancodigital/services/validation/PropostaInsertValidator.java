@@ -7,6 +7,7 @@ import com.jocivaldias.nossobancodigital.repositories.ClienteRepository;
 import com.jocivaldias.nossobancodigital.repositories.PropostaRepository;
 import com.jocivaldias.nossobancodigital.resources.exception.FieldMessage;
 import com.jocivaldias.nossobancodigital.services.validation.utils.BR;
+import com.jocivaldias.nossobancodigital.services.validation.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintValidator;
@@ -26,6 +27,10 @@ public class PropostaInsertValidator implements ConstraintValidator<PropostaInse
     @Override
     public boolean isValid(PropostaNewDTO objDto, ConstraintValidatorContext context) {
         List<FieldMessage> list = new ArrayList<>();
+
+        if(!DateUtils.maiorDeIdade(objDto.getDataNascimento())){
+            list.add(new FieldMessage("dataNascimento", "Deve ser maior de idade (18 anos)."));
+        }
 
         if(!BR.isValidCPF(objDto.getCpf())){
             list.add(new FieldMessage("cpf", "CPF inválido."));

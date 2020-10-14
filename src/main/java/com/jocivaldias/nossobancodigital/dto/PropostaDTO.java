@@ -6,6 +6,7 @@ import com.jocivaldias.nossobancodigital.services.validation.PropostaUpdate;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -25,6 +26,7 @@ public class PropostaDTO implements Serializable {
     private String email;
 
     @NotNull(message = "Preenchimento obrigatório.")
+    @Past(message = "Data de nascimento inválida")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy", timezone="America/Sao_Paulo")
     private Date dataNascimento;
 

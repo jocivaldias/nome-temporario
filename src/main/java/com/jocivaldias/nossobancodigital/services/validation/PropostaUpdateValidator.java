@@ -6,6 +6,7 @@ import com.jocivaldias.nossobancodigital.dto.PropostaNewDTO;
 import com.jocivaldias.nossobancodigital.repositories.ClienteRepository;
 import com.jocivaldias.nossobancodigital.resources.exception.FieldMessage;
 import com.jocivaldias.nossobancodigital.services.validation.utils.BR;
+import com.jocivaldias.nossobancodigital.services.validation.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerMapping;
 
@@ -34,6 +35,10 @@ public class PropostaUpdateValidator implements ConstraintValidator<PropostaUpda
         Integer uriId = Integer.parseInt(map.get("id"));
 
         List<FieldMessage> list = new ArrayList<>();
+
+        if(!DateUtils.maiorDeIdade(objDto.getDataNascimento())){
+            list.add(new FieldMessage("dataNascimento", "Deve ser maior de idade (18 anos)."));
+        }
 
         Cliente aux = clienteRepository.findByEmail(objDto.getEmail());
         if( aux != null && !aux.getId().equals(uriId) ){
