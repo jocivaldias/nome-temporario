@@ -2,6 +2,7 @@ package com.jocivaldias.nossobancodigital.resources.exception;
 
 import com.jocivaldias.nossobancodigital.services.exception.DataIntegrityException;
 import com.jocivaldias.nossobancodigital.services.exception.ObjectNotFoundException;
+import com.jocivaldias.nossobancodigital.services.exception.RegistrationStepException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -38,6 +39,13 @@ public class ResourceExceptionHandler {
         StandardError err = new StandardError(System.currentTimeMillis(), HttpStatus.BAD_REQUEST.value(),
                 "Integridade de dados", e.getMessage(), request.getRequestURI());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
+    }
+
+    @ExceptionHandler(RegistrationStepException.class)
+    public ResponseEntity<StandardError> registrationStep(RegistrationStepException e, HttpServletRequest request){
+        StandardError err = new StandardError(System.currentTimeMillis(), HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                "Etapa de Cadastro violada", e.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(err);
     }
 
 }

@@ -2,6 +2,7 @@ package com.jocivaldias.nossobancodigital.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jocivaldias.nossobancodigital.services.validation.PropostaInsert;
+import org.hibernate.validator.constraints.br.CPF;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -31,6 +32,7 @@ public class PropostaNewDTO implements Serializable {
     private Date dataNascimento;
 
     @NotBlank(message = "Preenchimento obrigatório.")
+    @CPF
     private String cpf;
 
     public PropostaNewDTO() {

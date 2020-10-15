@@ -2,10 +2,8 @@ package com.jocivaldias.nossobancodigital.services.validation;
 
 import com.jocivaldias.nossobancodigital.domain.Cliente;
 import com.jocivaldias.nossobancodigital.dto.PropostaDTO;
-import com.jocivaldias.nossobancodigital.dto.PropostaNewDTO;
 import com.jocivaldias.nossobancodigital.repositories.ClienteRepository;
 import com.jocivaldias.nossobancodigital.resources.exception.FieldMessage;
-import com.jocivaldias.nossobancodigital.services.validation.utils.BR;
 import com.jocivaldias.nossobancodigital.services.validation.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerMapping;

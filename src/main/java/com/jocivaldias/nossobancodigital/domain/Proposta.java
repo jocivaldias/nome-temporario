@@ -27,6 +27,7 @@ public class Proposta implements Serializable {
     private Integer status;
 
     @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(unique = true)
     private Cliente cliente;
 
     public Proposta() {
@@ -35,7 +36,7 @@ public class Proposta implements Serializable {
     public Proposta(Integer id) {
         this.id = id;
         this.dataAbertura = new Date();
-        this.status = StatusProposta.ABERTA.getCod();
+        this.status = StatusProposta.PENDENTE_DADOS_CLIENTE.getCod();
     }
 
     public Integer getId() {
@@ -62,12 +63,12 @@ public class Proposta implements Serializable {
         this.dataFechamento = dataFechamento;
     }
 
-    public Integer getStatus() {
-        return status;
+    public StatusProposta getStatus() {
+        return StatusProposta.toEnum(this.status);
     }
 
-    public void setStatus(Integer status) {
-        this.status = status;
+    public void setStatus(StatusProposta status) {
+        this.status = status.getCod();
     }
 
     public Cliente getCliente() {

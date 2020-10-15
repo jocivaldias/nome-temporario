@@ -2,9 +2,10 @@ package com.jocivaldias.nossobancodigital.domain.enums;
 
 public enum StatusProposta {
 
-    ABERTA(1, "Proposta Aberta"),
-    EFETIVADA(2, "Proposta Efetivada"),
-    CANCELADA(3, "Proposta Cancelada");
+    PENDENTE_DADOS_CLIENTE(1, "Pendente Dados Cliente"),
+    PENDENTE_ENDERECO_CLIENTE(2, "Pendente Endereço"),
+    PENDENTE_DOCUMENTACAO_CLIENTE(3, "Pendente Documentação"),
+    EFETIVADA(4, "Proposta Efetivada");
 
     public int cod;
     public String descricao;

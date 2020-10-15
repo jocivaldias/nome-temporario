@@ -20,8 +20,8 @@ public class Endereco implements Serializable {
     private String cidade;
     private String estado;
 
-
-    @OneToOne
+    @OneToOne(cascade=CascadeType.ALL)
+    @JoinColumn(unique = true)
     @JsonIgnore
     private Cliente cliente;
 

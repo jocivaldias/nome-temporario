@@ -2,6 +2,7 @@ package com.jocivaldias.nossobancodigital.services;
 
 import com.jocivaldias.nossobancodigital.domain.Cliente;
 import com.jocivaldias.nossobancodigital.domain.Proposta;
+import com.jocivaldias.nossobancodigital.domain.enums.StatusProposta;
 import com.jocivaldias.nossobancodigital.dto.PropostaDTO;
 import com.jocivaldias.nossobancodigital.dto.PropostaNewDTO;
 import com.jocivaldias.nossobancodigital.repositories.ClienteRepository;
@@ -23,23 +24,25 @@ public class PropostaService {
     public Proposta find(Integer id){
         Optional<Proposta> obj = repo.findById(id);
         return obj.orElseThrow(() -> new ObjectNotFoundException(
-                "Objeto não encontrado! Id: " + id + ", Tipo: " + Proposta.class.getName()
+                "Proposta não encontrada! Id: " + id + ", Tipo: " + Proposta.class.getName()
         ));
     }
 
     public Proposta insert(Proposta obj){
         obj.setId(null);
-        obj = repo.save(obj);
-        clienteRepository.save(obj.getCliente());
-        return obj;
+        return repo.save(obj);
     }
 
     public Proposta update(Proposta obj) {
         Proposta newObj = find(obj.getId());
         updateDadosBasicos(newObj, obj);
-        newObj = repo.save(newObj);
-        clienteRepository.save(newObj.getCliente());
-        return newObj;
+        return repo.save(newObj);
+    }
+
+    public void updateStatus(Proposta proposta, StatusProposta pendenteDocumentacao) {
+        Proposta newObj = find(proposta.getId());
+        newObj.setStatus(pendenteDocumentacao);
+        repo.save(newObj);
     }
 
     public Proposta fromDTO(PropostaNewDTO objDto) {
@@ -75,4 +78,5 @@ public class PropostaService {
         newObj.getCliente().setEmail(obj.getCliente().getEmail());
         newObj.getCliente().setDataNascimento(obj.getCliente().getDataNascimento());
     }
+
 }

@@ -27,10 +27,10 @@ public class Cliente implements Serializable {
     @Column(nullable = false)
     private Date dataNascimento;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String cpf;
 
-    @OneToOne(mappedBy = "cliente")
+    @OneToOne(cascade=CascadeType.ALL, mappedBy = "cliente")
     private Endereco endereco;
 
     @OneToOne
