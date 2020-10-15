@@ -3,6 +3,7 @@ package com.jocivaldias.nossobancodigital.services;
 import com.jocivaldias.nossobancodigital.domain.Cliente;
 import com.jocivaldias.nossobancodigital.domain.Endereco;
 import com.jocivaldias.nossobancodigital.domain.Proposta;
+import com.jocivaldias.nossobancodigital.domain.enums.StatusProposta;
 import com.jocivaldias.nossobancodigital.repositories.ClienteRepository;
 import com.jocivaldias.nossobancodigital.repositories.EnderecoRepository;
 import com.jocivaldias.nossobancodigital.repositories.PropostaRepository;
@@ -43,6 +44,9 @@ public class DBService {
         cli2.setEndereco(e2);
         e1.setCliente(cli1);
         e2.setCliente(cli2);
+
+        p1.setStatus(StatusProposta.PENDENTE_DOCUMENTACAO_CLIENTE);
+        p2.setStatus(StatusProposta.PENDENTE_DOCUMENTACAO_CLIENTE);
 
         propostaRepository.saveAll(Arrays.asList(p1, p2));
         clienteRepository.saveAll(Arrays.asList(cli1, cli2));

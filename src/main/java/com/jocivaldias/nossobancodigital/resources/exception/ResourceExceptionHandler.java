@@ -1,14 +1,13 @@
 package com.jocivaldias.nossobancodigital.resources.exception;
 
-import com.jocivaldias.nossobancodigital.services.exception.DataIntegrityException;
-import com.jocivaldias.nossobancodigital.services.exception.ObjectNotFoundException;
-import com.jocivaldias.nossobancodigital.services.exception.RegistrationStepException;
+import com.jocivaldias.nossobancodigital.services.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -47,5 +46,35 @@ public class ResourceExceptionHandler {
                 "Etapa de Cadastro violada", e.getMessage(), request.getRequestURI());
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(err);
     }
+
+    @ExceptionHandler(StorageException.class)
+    public ResponseEntity<StandardError> storage(StorageException e, HttpServletRequest request){
+        StandardError err = new StandardError(System.currentTimeMillis(), HttpStatus.BAD_REQUEST.value(),
+                "Erro no sistema de arquivo", e.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
+    }
+
+    @ExceptionHandler(StorageFileNotFoundException.class)
+    public ResponseEntity<StandardError> storageFileNotFound(StorageFileNotFoundException e, HttpServletRequest request){
+        StandardError err = new StandardError(System.currentTimeMillis(), HttpStatus.BAD_REQUEST.value(),
+                "Arquivo não encontrado", e.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
+    }
+
+    @ExceptionHandler(StorageFileContentException.class)
+    public ResponseEntity<StandardError> storageFileContentException(StorageFileContentException e, HttpServletRequest request){
+        StandardError err = new StandardError(System.currentTimeMillis(), HttpStatus.BAD_REQUEST.value(),
+                "Conteúdo inválido", e.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<StandardError> storageFileContentE12xception(MaxUploadSizeExceededException e, HttpServletRequest request){
+        StandardError err = new StandardError(System.currentTimeMillis(), HttpStatus.BAD_REQUEST.value(),
+                "Arquivo Inválido", e.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
+    }
+
+
 
 }

@@ -5,21 +5,30 @@ import com.jocivaldias.nossobancodigital.domain.Proposta;
 import com.jocivaldias.nossobancodigital.domain.enums.StatusProposta;
 import com.jocivaldias.nossobancodigital.dto.PropostaDTO;
 import com.jocivaldias.nossobancodigital.dto.PropostaNewDTO;
-import com.jocivaldias.nossobancodigital.repositories.ClienteRepository;
 import com.jocivaldias.nossobancodigital.repositories.PropostaRepository;
 import com.jocivaldias.nossobancodigital.services.exception.ObjectNotFoundException;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
 @Service
 public class PropostaService {
 
+    private final PropostaRepository repo;
+    private final StorageService storageService;
+
+    @Value("${document.prefix}")
+    private String prefix;
+
     @Autowired
-    private PropostaRepository repo;
-    @Autowired
-    private ClienteRepository clienteRepository;
+    public PropostaService(PropostaRepository repo, StorageService storageService) {
+        this.repo = repo;
+        this.storageService = storageService;
+    }
 
     public Proposta find(Integer id){
         Optional<Proposta> obj = repo.findById(id);
@@ -35,14 +44,24 @@ public class PropostaService {
 
     public Proposta update(Proposta obj) {
         Proposta newObj = find(obj.getId());
-        updateDadosBasicos(newObj, obj);
+        updateDadosBasicosCliente(newObj, obj);
         return repo.save(newObj);
     }
 
-    public void updateStatus(Proposta proposta, StatusProposta pendenteDocumentacao) {
+    public void updateStatus(Proposta proposta, StatusProposta status) {
         Proposta newObj = find(proposta.getId());
-        newObj.setStatus(pendenteDocumentacao);
+        newObj.setStatus(status);
         repo.save(newObj);
+    }
+
+    public void uploadDocumento(Proposta proposta, MultipartFile file) {
+        String ext = FilenameUtils.getExtension(file.getOriginalFilename());
+        String fileName = prefix + proposta.getId() + "." + ext;
+
+        storageService.store(file, fileName);
+        proposta.setStatus(StatusProposta.PENDENTE_CONFIRMACAO_CLIENTE);
+        proposta.setFilename(fileName);
+        repo.save(proposta);
     }
 
     public Proposta fromDTO(PropostaNewDTO objDto) {
@@ -72,11 +91,10 @@ public class PropostaService {
         return proposta;
     }
 
-    private void updateDadosBasicos(Proposta newObj, Proposta obj) {
+    private void updateDadosBasicosCliente(Proposta newObj, Proposta obj) {
         newObj.getCliente().setNome(obj.getCliente().getNome());
         newObj.getCliente().setSobrenome(obj.getCliente().getSobrenome());
         newObj.getCliente().setEmail(obj.getCliente().getEmail());
         newObj.getCliente().setDataNascimento(obj.getCliente().getDataNascimento());
     }
-
 }

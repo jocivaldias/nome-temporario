@@ -5,6 +5,7 @@ public enum StatusProposta {
     PENDENTE_DADOS_CLIENTE(1, "Pendente Dados Cliente"),
     PENDENTE_ENDERECO_CLIENTE(2, "Pendente Endereço"),
     PENDENTE_DOCUMENTACAO_CLIENTE(3, "Pendente Documentação"),
+    PENDENTE_CONFIRMACAO_CLIENTE(3, "Pendente Confirmação Cliente"),
     EFETIVADA(4, "Proposta Efetivada");
 
     public int cod;
@@ -23,13 +24,13 @@ public enum StatusProposta {
         return descricao;
     }
 
-    public static StatusProposta toEnum(Integer cod){
-        if(cod == null){
+    public static StatusProposta toEnum(Integer cod) {
+        if (cod == null) {
             return null;
         }
 
-        for(StatusProposta x : StatusProposta.values()){
-            if(cod.equals(x.getCod())){
+        for (StatusProposta x : StatusProposta.values()) {
+            if (cod.equals(x.getCod())) {
                 return x;
             }
         }

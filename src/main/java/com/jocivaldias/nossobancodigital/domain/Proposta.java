@@ -1,10 +1,13 @@
 package com.jocivaldias.nossobancodigital.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jocivaldias.nossobancodigital.domain.enums.StatusProposta;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.net.URI;
 import java.util.Date;
 import java.util.Objects;
 
@@ -29,6 +32,8 @@ public class Proposta implements Serializable {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(unique = true)
     private Cliente cliente;
+
+    private String filename;
 
     public Proposta() {
     }
@@ -77,6 +82,14 @@ public class Proposta implements Serializable {
 
     public void setCliente(Cliente cliente) {
         this.cliente = cliente;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
 
     @Override
