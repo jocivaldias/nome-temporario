@@ -1,10 +1,8 @@
 package com.jocivaldias.nossobancodigital.services;
 
 import com.jocivaldias.nossobancodigital.domain.Endereco;
-import com.jocivaldias.nossobancodigital.domain.Proposta;
 import com.jocivaldias.nossobancodigital.dto.EnderecoNewDTO;
 import com.jocivaldias.nossobancodigital.repositories.EnderecoRepository;
-import com.jocivaldias.nossobancodigital.repositories.PropostaRepository;
 import com.jocivaldias.nossobancodigital.services.exception.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,11 +12,12 @@ import java.util.Optional;
 @Service
 public class EnderecoService {
 
-    @Autowired
-    private EnderecoRepository repo;
+    private final EnderecoRepository repo;
 
     @Autowired
-    private PropostaRepository propostaRepository;
+    public EnderecoService(EnderecoRepository repo) {
+        this.repo = repo;
+    }
 
     public Endereco find(Integer id) {
         Optional<Endereco> obj = repo.findById(id);

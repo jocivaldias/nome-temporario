@@ -17,14 +17,18 @@ import java.util.Arrays;
 @Service
 public class DBService {
 
-    @Autowired
-    private PropostaRepository propostaRepository;
+    private final PropostaRepository propostaRepository;
+
+    private final ClienteRepository clienteRepository;
+
+    private final EnderecoRepository enderecoRepository;
 
     @Autowired
-    private ClienteRepository clienteRepository;
-
-    @Autowired
-    private EnderecoRepository enderecoRepository;
+    public DBService(PropostaRepository propostaRepository, ClienteRepository clienteRepository, EnderecoRepository enderecoRepository) {
+        this.propostaRepository = propostaRepository;
+        this.clienteRepository = clienteRepository;
+        this.enderecoRepository = enderecoRepository;
+    }
 
     public void instantiateTestDatabase() throws ParseException {
         Proposta p1 = new Proposta(null);

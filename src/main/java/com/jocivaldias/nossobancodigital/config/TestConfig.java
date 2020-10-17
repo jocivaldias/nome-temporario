@@ -1,8 +1,6 @@
 package com.jocivaldias.nossobancodigital.config;
 
-import com.jocivaldias.nossobancodigital.services.DBService;
-import com.jocivaldias.nossobancodigital.services.FileSystemStorageService;
-import com.jocivaldias.nossobancodigital.services.StorageService;
+import com.jocivaldias.nossobancodigital.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,8 +12,12 @@ import java.text.ParseException;
 @Profile("test")
 public class TestConfig {
 
+    private final DBService dbService;
+
     @Autowired
-    private DBService dbService;
+    public TestConfig(DBService dbService) {
+        this.dbService = dbService;
+    }
 
     @Bean
     public boolean instantiateDatabase() throws ParseException {
@@ -26,5 +28,10 @@ public class TestConfig {
     @Bean
     public StorageService storageService() {
         return new FileSystemStorageService();
+    }
+
+    @Bean
+    public EmailService emailService(){
+        return new MockEmailService();
     }
 }

@@ -11,8 +11,12 @@ import java.util.Optional;
 @Service
 public class ClienteService {
 
+    private final ClienteRepository repo;
+
     @Autowired
-    private ClienteRepository repo;
+    public ClienteService(ClienteRepository repo) {
+        this.repo = repo;
+    }
 
     public Cliente find(Integer id){
         Optional<Cliente> obj = repo.findById(id);

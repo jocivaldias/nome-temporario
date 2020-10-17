@@ -1,8 +1,6 @@
 package com.jocivaldias.nossobancodigital.config;
 
-import com.jocivaldias.nossobancodigital.services.DBService;
-import com.jocivaldias.nossobancodigital.services.FileSystemStorageService;
-import com.jocivaldias.nossobancodigital.services.StorageService;
+import com.jocivaldias.nossobancodigital.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -15,8 +13,12 @@ import java.text.ParseException;
 @Profile("dev")
 public class DevConfig {
 
+    private final DBService dbService;
+
     @Autowired
-    private DBService dbService;
+    public DevConfig(DBService dbService) {
+        this.dbService = dbService;
+    }
 
     @Value("${spring.jpa.hibernate.ddl-auto}")
     private String strategy;
@@ -34,5 +36,12 @@ public class DevConfig {
     public StorageService storageService() {
         return new FileSystemStorageService();
     }
+
+    //Observe que se eu substituir MockEmailService por SmtpEmailService poderia enviar e-mails.
+    @Bean
+    public EmailService emailService(){
+        return new MockEmailService();
+    }
+
 
 }

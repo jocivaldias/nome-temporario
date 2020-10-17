@@ -1,6 +1,8 @@
 package com.jocivaldias.nossobancodigital.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -8,6 +10,9 @@ import java.util.Date;
 import java.util.Objects;
 
 @Entity
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class Cliente implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -124,5 +129,18 @@ public class Cliente implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Cliente{");
+        sb.append("nome='").append(nome).append('\'');
+        sb.append(", sobrenome='").append(sobrenome).append('\'');
+        sb.append(", email='").append(email).append('\'');
+        sb.append(", dataNascimento=").append(dataNascimento);
+        sb.append(", cpf='").append(cpf).append('\'');
+        sb.append(", endereco=").append(endereco);
+        sb.append('}');
+        return sb.toString();
     }
 }

@@ -114,5 +114,18 @@ public class Endereco implements Serializable {
     public int hashCode() {
         return Objects.hash(id);
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Endereco{");
+        sb.append("cep='").append(cep).append('\'');
+        sb.append(", rua='").append(rua).append('\'');
+        sb.append(", bairro='").append(bairro).append('\'');
+        sb.append(", complemento='").append(complemento).append('\'');
+        sb.append(", cidade='").append(cidade).append('\'');
+        sb.append(", estado='").append(estado).append('\'');
+        sb.append('}');
+        return sb.toString();
+    }
 }
 

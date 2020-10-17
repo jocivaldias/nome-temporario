@@ -2,7 +2,6 @@ package com.jocivaldias.nossobancodigital.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jocivaldias.nossobancodigital.services.validation.PropostaUpdate;
-import org.hibernate.validator.constraints.UniqueElements;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;

@@ -1,17 +1,20 @@
 package com.jocivaldias.nossobancodigital.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.jocivaldias.nossobancodigital.domain.enums.StatusProposta;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.net.URI;
 import java.util.Date;
 import java.util.Objects;
 
 @Entity
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class Proposta implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -20,10 +23,10 @@ public class Proposta implements Serializable {
     private Integer id;
 
     @Column(nullable = false)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone="America/Sao_Paulo")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone="America/Sao_Paulo")
     private Date dataAbertura;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone="America/Sao_Paulo")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone="America/Sao_Paulo")
     private Date dataFechamento; // Seja com falha ou sucesso
 
     @Column(nullable = false)
@@ -33,6 +36,11 @@ public class Proposta implements Serializable {
     @JoinColumn(unique = true)
     private Cliente cliente;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(unique = true)
+    private Conta conta;
+
+    @JsonIgnore
     private String filename;
 
     public Proposta() {
@@ -41,7 +49,7 @@ public class Proposta implements Serializable {
     public Proposta(Integer id) {
         this.id = id;
         this.dataAbertura = new Date();
-        this.status = StatusProposta.PENDENTE_DADOS_CLIENTE.getCod();
+        this.status = StatusProposta.ABERTA.getCod();
     }
 
     public Integer getId() {
@@ -82,6 +90,14 @@ public class Proposta implements Serializable {
 
     public void setCliente(Cliente cliente) {
         this.cliente = cliente;
+    }
+
+    public Conta getConta() {
+        return conta;
+    }
+
+    public void setConta(Conta conta) {
+        this.conta = conta;
     }
 
     public String getFilename() {
