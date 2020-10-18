@@ -42,9 +42,6 @@ public class Cliente implements Serializable {
     @JsonIgnore
     private Proposta proposta;
 
-    @JsonIgnore
-    private Boolean ativo;
-
     public Cliente() {
     }
 
@@ -119,14 +116,6 @@ public class Cliente implements Serializable {
 
     public void setProposta(Proposta proposta) {
         this.proposta = proposta;
-    }
-
-    public Boolean getAtivo() {
-        return ativo;
-    }
-
-    public void setAtivo(Boolean ativo) {
-        this.ativo = ativo;
     }
 
     @Override

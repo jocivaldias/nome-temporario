@@ -128,7 +128,6 @@ public class ContaService {
 
     public void atualizaSaldo(Conta obj, Double valor) {
         Conta saveObj = this.find(obj.getId());
-
         saveObj.setSaldo(obj.getSaldo() + valor);
         repo.save(saveObj);
     }
