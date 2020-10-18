@@ -12,4 +12,6 @@ public interface ClienteRepository extends JpaRepository<Cliente, Integer> {
     @Transactional(readOnly = true)
     public Cliente findByEmail(String email);
 
+    public Cliente findByEmailAndCpf(String email, String cpf);
+
 }

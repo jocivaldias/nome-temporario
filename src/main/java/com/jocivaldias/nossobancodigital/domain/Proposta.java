@@ -8,7 +8,7 @@ import com.jocivaldias.nossobancodigital.domain.enums.StatusProposta;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
@@ -24,20 +24,18 @@ public class Proposta implements Serializable {
 
     @Column(nullable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone="America/Sao_Paulo")
-    private Date dataAbertura;
+    private LocalDate dataAbertura;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone="America/Sao_Paulo")
-    private Date dataFechamento; // Seja com falha ou sucesso
+    private LocalDate dataFechamento; // Seja com falha ou sucesso
 
     @Column(nullable = false)
     private Integer status;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(unique = true)
     private Cliente cliente;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(unique = true)
     private Conta conta;
 
     @JsonIgnore
@@ -48,7 +46,7 @@ public class Proposta implements Serializable {
 
     public Proposta(Integer id) {
         this.id = id;
-        this.dataAbertura = new Date();
+        this.dataAbertura = LocalDate.now();
         this.status = StatusProposta.ABERTA.getCod();
     }
 
@@ -60,19 +58,19 @@ public class Proposta implements Serializable {
         this.id = id;
     }
 
-    public Date getDataAbertura() {
+    public LocalDate getDataAbertura() {
         return dataAbertura;
     }
 
-    public void setDataAbertura(Date dataAbertura) {
+    public void setDataAbertura(LocalDate dataAbertura) {
         this.dataAbertura = dataAbertura;
     }
 
-    public Date getDataFechamento() {
+    public LocalDate getDataFechamento() {
         return dataFechamento;
     }
 
-    public void setDataFechamento(Date dataFechamento) {
+    public void setDataFechamento(LocalDate dataFechamento) {
         this.dataFechamento = dataFechamento;
     }
 

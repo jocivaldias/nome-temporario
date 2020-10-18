@@ -1,6 +1,7 @@
 package com.jocivaldias.nossobancodigital.domain;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
@@ -27,12 +28,14 @@ public class Conta implements Serializable {
     @Column(nullable = false, length = 3)
     private String codigoBanco;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(unique = true)
+    @OneToOne(mappedBy = "conta")
     private Proposta proposta;
 
     @Column(nullable = false)
     private Double saldo = 0.00;
+
+    @JsonIgnore
+    private String senha;
 
     public Conta() {
     }
@@ -83,6 +86,14 @@ public class Conta implements Serializable {
 
     public void setSaldo(Double saldo) {
         this.saldo = saldo;
+    }
+
+    public String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
     }
 
     @Override

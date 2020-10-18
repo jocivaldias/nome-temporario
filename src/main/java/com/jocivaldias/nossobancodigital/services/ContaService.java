@@ -10,9 +10,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
@@ -21,6 +23,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 
+import javax.persistence.LockModeType;
 import java.net.URI;
 import java.time.Duration;
 import java.util.Optional;
@@ -55,13 +58,6 @@ public class ContaService {
     public Conta insert(Conta obj) {
         obj.setId(null);
         return repo.save(obj);
-    }
-
-    @Transactional
-    public Conta atualizaSaldo(Conta obj, Double valor) {
-        Conta conta = find(obj.getId());
-        conta.setSaldo(obj.getSaldo() + valor);
-        return repo.save(conta);
     }
 
     public void liberarConta(Proposta proposta) {
@@ -123,6 +119,20 @@ public class ContaService {
         return conta;
     }
 
+    public void updateSenha(Conta obj) {
+        Conta saveObj = this.find(obj.getId());
+
+        saveObj.setSenha(obj.getSenha());
+        repo.save(saveObj);
+    }
+
+    public void atualizaSaldo(Conta obj, Double valor) {
+        Conta saveObj = this.find(obj.getId());
+
+        saveObj.setSaldo(obj.getSaldo() + valor);
+        repo.save(saveObj);
+    }
+
     private ExchangeFilterFunction logRequest() {
         return ExchangeFilterFunction.ofRequestProcessor(request -> {
             logger.info("Request {} {}", request.method(), request.url());
@@ -148,4 +158,5 @@ public class ContaService {
     private char randomDigitChar() {
         return (char) (rand.nextInt(10) + 48); // Tabela ASCII
     }
+
 }

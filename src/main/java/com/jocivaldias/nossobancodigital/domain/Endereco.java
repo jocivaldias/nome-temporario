@@ -20,8 +20,7 @@ public class Endereco implements Serializable {
     private String cidade;
     private String estado;
 
-    @OneToOne(cascade=CascadeType.ALL)
-    @JoinColumn(unique = true)
+    @OneToOne(mappedBy = "endereco", cascade = CascadeType.ALL)
     @JsonIgnore
     private Cliente cliente;
 

@@ -171,8 +171,10 @@ public class PropostaResource {
             contaService.criaConta(proposta);
             emailService.bemVindoNovoCliente(proposta.getCliente());
             service.updateStatus(proposta, StatusProposta.LIBERADA);
+            service.finalizaProposta(proposta);
         } else { // API negou a documentação
             service.updateStatus(proposta, StatusProposta.CANCELADA);
+            service.finalizaProposta(proposta);
         }
 
         return ResponseEntity.ok().build();

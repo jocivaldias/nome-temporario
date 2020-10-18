@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -59,9 +61,18 @@ public class PropostaService {
         String fileName = prefix + proposta.getId() + "." + ext;
 
         storageService.store(file, fileName);
-        proposta.setStatus(StatusProposta.PENDENTE_CONFIRMACAO_CLIENTE);
+
+        if(proposta.getStatus().getCod() == StatusProposta.PENDENTE_DOCUMENTACAO_CLIENTE.getCod()) {
+            proposta.setStatus(StatusProposta.PENDENTE_CONFIRMACAO_CLIENTE);
+        }
         proposta.setFilename(fileName);
         repo.save(proposta);
+    }
+
+    public Proposta finalizaProposta(Proposta proposta) {
+        Proposta newObj = find(proposta.getId());
+        newObj.setDataFechamento(LocalDate.now());
+        return repo.save(newObj);
     }
 
     public Proposta fromDTO(PropostaNewDTO objDto) {
@@ -97,4 +108,5 @@ public class PropostaService {
         newObj.getCliente().setEmail(obj.getCliente().getEmail());
         newObj.getCliente().setDataNascimento(obj.getCliente().getDataNascimento());
     }
+
 }

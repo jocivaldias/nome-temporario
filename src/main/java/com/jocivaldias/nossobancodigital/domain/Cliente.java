@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
@@ -30,22 +30,25 @@ public class Cliente implements Serializable {
     private String email;
 
     @Column(nullable = false)
-    private Date dataNascimento;
+    private LocalDate dataNascimento;
 
     @Column(nullable = false)
     private String cpf;
 
-    @OneToOne(cascade=CascadeType.ALL, mappedBy = "cliente")
+    @OneToOne(cascade=CascadeType.ALL)
     private Endereco endereco;
 
-    @OneToOne
+    @OneToOne(mappedBy = "cliente")
     @JsonIgnore
     private Proposta proposta;
+
+    @JsonIgnore
+    private Boolean ativo;
 
     public Cliente() {
     }
 
-    public Cliente(Integer id, String nome, String sobrenome, String email, Date dataNascimento, String cpf) {
+    public Cliente(Integer id, String nome, String sobrenome, String email, LocalDate dataNascimento, String cpf) {
         this.id = id;
         this.nome = nome;
         this.sobrenome = sobrenome;
@@ -102,11 +105,11 @@ public class Cliente implements Serializable {
         this.endereco = endereco;
     }
 
-    public Date getDataNascimento() {
+    public LocalDate getDataNascimento() {
         return dataNascimento;
     }
 
-    public void setDataNascimento(Date dataNascimento) {
+    public void setDataNascimento(LocalDate dataNascimento) {
         this.dataNascimento = dataNascimento;
     }
 
@@ -116,6 +119,14 @@ public class Cliente implements Serializable {
 
     public void setProposta(Proposta proposta) {
         this.proposta = proposta;
+    }
+
+    public Boolean getAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(Boolean ativo) {
+        this.ativo = ativo;
     }
 
     @Override
@@ -143,4 +154,6 @@ public class Cliente implements Serializable {
         sb.append('}');
         return sb.toString();
     }
+
+
 }

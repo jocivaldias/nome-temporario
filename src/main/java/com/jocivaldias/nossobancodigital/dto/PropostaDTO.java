@@ -8,7 +8,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 
 @PropostaUpdate
 public class PropostaDTO implements Serializable {
@@ -28,7 +28,7 @@ public class PropostaDTO implements Serializable {
     @NotNull(message = "Preenchimento obrigatório.")
     @Past(message = "Data de nascimento inválida")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy", timezone="America/Sao_Paulo")
-    private Date dataNascimento;
+    private LocalDate dataNascimento;
 
     public PropostaDTO() {
     }
@@ -57,11 +57,11 @@ public class PropostaDTO implements Serializable {
         this.email = email;
     }
 
-    public Date getDataNascimento() {
+    public LocalDate getDataNascimento() {
         return dataNascimento;
     }
 
-    public void setDataNascimento(Date dataNascimento) {
+    public void setDataNascimento(LocalDate dataNascimento) {
         this.dataNascimento = dataNascimento;
     }
 

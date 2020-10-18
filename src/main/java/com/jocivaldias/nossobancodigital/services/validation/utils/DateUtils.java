@@ -7,14 +7,9 @@ import java.util.Date;
 
 public class DateUtils {
 
-    public static boolean maiorDeIdade(Date dataDeNascimento){
-        return Period.between(convertToLocalDateViaInstant(dataDeNascimento), LocalDate.now()).getYears() >= 18;
+    public static boolean maiorDeIdade(LocalDate dataDeNascimento){
+        return Period.between(dataDeNascimento, LocalDate.now()).getYears() >= 18;
     }
 
-    //Fonte: https://www.baeldung.com/java-date-to-localdate-and-localdatetime
-    private static LocalDate convertToLocalDateViaInstant(Date dateToConvert) {
-        return dateToConvert.toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate();
-    }
+
 }
