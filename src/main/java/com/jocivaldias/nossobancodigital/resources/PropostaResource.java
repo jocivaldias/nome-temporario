@@ -113,7 +113,7 @@ public class PropostaResource {
     }
 
     @RequestMapping(value = "/{id}/documento", method = RequestMethod.POST)
-    public ResponseEntity<Void> uploadClienteDocumento(@PathVariable Integer id, @RequestParam(name = "file") MultipartFile file) {
+    public ResponseEntity<Void> uploadClienteDocumento(@PathVariable Integer id, @RequestParam MultipartFile file) {
         Proposta proposta = propostaService.find(id);
 
         if (proposta.getStatus().getCod() < StatusProposta.PENDENTE_DOCUMENTACAO_CLIENTE.getCod()) {

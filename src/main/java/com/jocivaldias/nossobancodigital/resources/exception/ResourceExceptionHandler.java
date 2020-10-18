@@ -89,5 +89,12 @@ public class ResourceExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
     }
 
+    @ExceptionHandler(AuthorizationException.class)
+    public ResponseEntity<StandardError> naoAutenticado(AuthorizationException e, HttpServletRequest request){
+        StandardError err = new StandardError(System.currentTimeMillis(), HttpStatus.FORBIDDEN.value(),
+                "Acesso negado", e.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(err);
+    }
+
 
 }

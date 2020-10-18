@@ -40,6 +40,17 @@ public class Conta implements Serializable {
     public Conta() {
     }
 
+    public Conta(Integer id, String agencia, String conta, String codigoBanco, Proposta proposta,
+                 Double saldo, String senha) {
+        this.id = id;
+        this.agencia = agencia;
+        this.conta = conta;
+        this.codigoBanco = codigoBanco;
+        this.proposta = proposta;
+        this.saldo = saldo;
+        this.senha = senha;
+    }
+
     public Integer getId() {
         return id;
     }

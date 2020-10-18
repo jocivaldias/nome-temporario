@@ -2,9 +2,12 @@ package com.jocivaldias.nossobancodigital.services;
 
 import com.jocivaldias.nossobancodigital.domain.Conta;
 import com.jocivaldias.nossobancodigital.domain.Proposta;
+import com.jocivaldias.nossobancodigital.domain.enums.Perfil;
 import com.jocivaldias.nossobancodigital.domain.enums.StatusProposta;
 import com.jocivaldias.nossobancodigital.repositories.ContaRepository;
+import com.jocivaldias.nossobancodigital.security.UserSS;
 import com.jocivaldias.nossobancodigital.services.exception.AprovacaoApiException;
+import com.jocivaldias.nossobancodigital.services.exception.AuthorizationException;
 import com.jocivaldias.nossobancodigital.services.exception.ObjectNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +52,12 @@ public class ContaService {
     }
 
     public Conta find(Integer id) {
+        UserSS user = UserService.authenticated();
+
+        if(user==null || !id.equals(user.getId())){
+            throw new AuthorizationException("Acesso negado");
+        }
+
         Optional<Conta> obj = repo.findById(id);
         return obj.orElseThrow(() -> new ObjectNotFoundException(
                 "Conta não encontrada! Id: " + id + ", Tipo: " + Conta.class.getName()
@@ -120,16 +129,19 @@ public class ContaService {
     }
 
     public void updateSenha(Conta obj) {
-        Conta saveObj = this.find(obj.getId());
+        Conta saveObj = repo.findById(obj.getId()).orElseThrow(
+                () -> new ObjectNotFoundException("Conta não encontrada"));
 
         saveObj.setSenha(obj.getSenha());
         repo.save(saveObj);
     }
 
-    public void atualizaSaldo(Conta obj, Double valor) {
-        Conta saveObj = this.find(obj.getId());
-        saveObj.setSaldo(obj.getSaldo() + valor);
-        repo.save(saveObj);
+
+    public synchronized void atualizaSaldo(Conta obj, Double valor) {
+        Conta saveObj = repo.findById(obj.getId()).orElseThrow(
+                () -> new ObjectNotFoundException("Conta não encontrada"));
+        obj.setSaldo(saveObj.getSaldo() + valor);
+        repo.save(obj);
     }
 
     private ExchangeFilterFunction logRequest() {

@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -63,10 +64,8 @@ public class TransferenciaService {
     }
 
     @Async
+    @Transactional
     public void processaTransferencias(List<TransferenciaDTO> listObjDto) {
-        try { Thread.sleep(5000); } catch (InterruptedException ex) {
-            System.out.println ("Puxa, estava dormindo! Você me acordou");
-        }
         for(TransferenciaDTO x: listObjDto){
             Transferencia transferencia = fromDTO(x);
             if(transferencia != null) {

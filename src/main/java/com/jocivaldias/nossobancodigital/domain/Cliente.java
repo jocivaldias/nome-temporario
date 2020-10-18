@@ -32,7 +32,7 @@ public class Cliente implements Serializable {
     @Column(nullable = false)
     private LocalDate dataNascimento;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String cpf;
 
     @OneToOne(cascade=CascadeType.ALL)
