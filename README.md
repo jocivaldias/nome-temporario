@@ -36,7 +36,7 @@ Nosso Banco Digital foi desenvolvido como parte do processo seletivo para o **Bo
 
 O modelo de dados final da aplicação pode ser visto abaixo:
 
-![modelo de dados](https://user-images.githubusercontent.com/11140125/96391314-a834e880-118e-11eb-8766-0f070d62aec0.png)
+![modelo de dados](https://user-images.githubusercontent.com/11140125/96477243-a27de800-120c-11eb-9c6e-dbdf4afcf85b.png)
 
 ## Tecnologias Utilizadas
 
@@ -116,8 +116,7 @@ Todos os endpoints foram documentados através do `swagger` e pode ser visto ace
 
 * 	[Swagger](http://localhost:8080/swagger-ui.html) - `http://localhost:8080/swagger-ui.html`- Documentation & Testing
 
-![endpoints](https://user-images.githubusercontent.com/11140125/96394471-79237480-1198-11eb-86d5-dae4378a0544.png)
-
+![endpoints](https://user-images.githubusercontent.com/11140125/96477268-ab6eb980-120c-11eb-9d2a-3b760bbd2349.png)
 
 ## Autor
 
