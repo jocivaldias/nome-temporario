@@ -10,7 +10,7 @@ import java.util.Objects;
 
 @Entity
 @Table(uniqueConstraints={
-        @UniqueConstraint(columnNames = {"id_unico_banco_transferencia", "conta_destino_id"})
+        @UniqueConstraint(columnNames = {"id_unico_banco_transferencia", "codigo_banco_origem"})
 })
 public class Transferencia implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -29,7 +29,7 @@ public class Transferencia implements Serializable {
     @Column(nullable = false)
     private String documentoIdentificador;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "codigo_banco_origem")
     private String codigoBancoOrigem;
 
     @Column(nullable = false)
