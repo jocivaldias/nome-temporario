@@ -16,7 +16,6 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -38,7 +37,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private JWTUtil jwtUtil;
 
-
     private static final String[] PUBLIC_MATCHERS = {
             "/h2-console/**"
     };
@@ -52,11 +50,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/transferencias/**",
             "/auth/cadastrar-senha/**",
             "/auth/esqueceu-senha/**",
-            "/auth/solicitar-token/**"
+            "/auth/solicitar-token/**",
     };
 
     @Autowired
-    public SecurityConfig(@Qualifier("userDetailServiceImpl") UserDetailsService userDetailsService, Environment env, JWTUtil jwtUtil) {
+    public SecurityConfig(@Qualifier("userDetailServiceImpl") UserDetailsService userDetailsService,
+                          Environment env, JWTUtil jwtUtil) {
         this.userDetailsService = userDetailsService;
         this.env = env;
         this.jwtUtil = jwtUtil;
@@ -64,9 +63,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-         web.ignoring().antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources/**", "/configuration/**",
-                 "/swagger-ui.html", "/webjars/**");
-    }   
+        web.ignoring().antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources/**", "/configuration/**",
+                "/swagger-ui.html", "/webjars/**");
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {

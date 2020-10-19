@@ -10,6 +10,9 @@ import com.jocivaldias.nossobancodigital.dto.PropostaNewDTO;
 import com.jocivaldias.nossobancodigital.services.*;
 import com.jocivaldias.nossobancodigital.services.exception.DataIntegrityException;
 import com.jocivaldias.nossobancodigital.services.exception.RegistrationStepException;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -49,12 +52,24 @@ public class PropostaResource {
         this.emailService = emailService;
     }
 
+    @ApiOperation(value = "Retorna a proposta pelo id")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Proposta retornada com sucesso"),
+            @ApiResponse(code = 404, message = "Proposta não encontrada"),
+            @ApiResponse(code = 500, message = "Erro inesperado")
+    })
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<Proposta> buscarPorId(@PathVariable Integer id) {
         Proposta obj = service.find(id);
         return ResponseEntity.ok().body(obj);
     }
 
+    @ApiOperation(value = "Cria uma proposta com dados básicos do cliente")
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Proposta criada com sucesso"),
+            @ApiResponse(code = 400, message = "Erro na validação dos dados"),
+            @ApiResponse(code = 500, message = "Erro inesperado")
+    })
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Void> insereProposta(@Valid @RequestBody PropostaNewDTO objDto) {
         Proposta obj = service.fromDTO(objDto);
@@ -70,6 +85,13 @@ public class PropostaResource {
         return ResponseEntity.created(uri).build();
     }
 
+    @ApiOperation(value = "Edita os dados básicos do Cliente de uma proposta")
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "Proposta alterada"),
+            @ApiResponse(code = 400, message = "Erro na validação dos dados"),
+            @ApiResponse(code = 404, message = "Proposta não encontrada"),
+            @ApiResponse(code = 500, message = "Erro inesperado")
+    })
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     public ResponseEntity<Void> editaProposta(@PathVariable Integer id, @Valid @RequestBody PropostaDTO objDto) {
         Proposta obj = service.fromDTO(objDto);
@@ -78,6 +100,13 @@ public class PropostaResource {
         return ResponseEntity.noContent().build();
     }
 
+    @ApiOperation(value = "Insere Endereço do Cliente em uma proposta")
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Endereço adicionado a Proposta"),
+            @ApiResponse(code = 400, message = "Erro na validação dos dados"),
+            @ApiResponse(code = 404, message = "Proposta não encontrada"),
+            @ApiResponse(code = 500, message = "Erro inesperado")
+    })
     @RequestMapping(value = "/{id}/endereco", method = RequestMethod.POST)
     public ResponseEntity<Void> insereEnderecoClienteProposta(@PathVariable Integer id, @Valid @RequestBody EnderecoNewDTO objDto) {
         Endereco obj = enderecoService.fromDTO(objDto);
@@ -85,11 +114,7 @@ public class PropostaResource {
         proposta.getCliente().setEndereco(obj);
         obj.setCliente(proposta.getCliente());
 
-        try {
-            enderecoService.insert(obj);
-        } catch (DataIntegrityViolationException e) {
-            throw new DataIntegrityException("Cliente já possui endereço.");
-        }
+        enderecoService.insert(obj);
 
         propostaService.updateStatus(proposta, StatusProposta.PENDENTE_DOCUMENTACAO_CLIENTE);
 
@@ -102,6 +127,13 @@ public class PropostaResource {
         return ResponseEntity.created(uri).build();
     }
 
+    @ApiOperation(value = "Alteração do Endereço do Cliente em uma proposta")
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "Endereço alterado"),
+            @ApiResponse(code = 400, message = "Erro na validação dos dados"),
+            @ApiResponse(code = 404, message = "Proposta não encontrada"),
+            @ApiResponse(code = 500, message = "Erro inesperado")
+    })
     @RequestMapping(value = "/{id}/endereco", method = RequestMethod.PUT)
     public ResponseEntity<Void> editaEnderecoClienteProposta(@PathVariable Integer id, @Valid @RequestBody EnderecoNewDTO objDto) {
         Endereco obj = enderecoService.fromDTO(objDto);
@@ -112,6 +144,14 @@ public class PropostaResource {
         return ResponseEntity.noContent().build();
     }
 
+    @ApiOperation(value = "Inserção da frente do CPF (arquivo) na Proposta")
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Documento inserido na Proposta"),
+            @ApiResponse(code = 400, message = "Erro na validação do arquivo"),
+            @ApiResponse(code = 404, message = "Proposta não encontrada"),
+            @ApiResponse(code = 422, message = "Violação na etapa de cadastro"),
+            @ApiResponse(code = 500, message = "Erro inesperado")
+    })
     @RequestMapping(value = "/{id}/documento", method = RequestMethod.POST)
     public ResponseEntity<Void> uploadClienteDocumento(@PathVariable Integer id, @RequestParam MultipartFile file) {
         Proposta proposta = propostaService.find(id);
@@ -131,6 +171,13 @@ public class PropostaResource {
         return ResponseEntity.created(uri).build();
     }
 
+    @ApiOperation(value = "Download do arquivo inserido na Proposta")
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Documento retornado no corpo da requisição"),
+            @ApiResponse(code = 400, message = "Erro no sistema de arquivos"),
+            @ApiResponse(code = 404, message = "Proposta não encontrada"),
+            @ApiResponse(code = 500, message = "Erro inesperado")
+    })
     @RequestMapping(value = "/{id}/documento", method = RequestMethod.GET)
     public ResponseEntity<Resource> downloadFile(@PathVariable Integer id) {
         Proposta proposta = service.find(id);
@@ -140,6 +187,14 @@ public class PropostaResource {
                 "attachment; filename=\"" + file.getFilename() + "\"").body(file);
     }
 
+    @ApiOperation(value = "Confirmação/Desconfirmação do Cliente para efetivação da Proposta")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Confirmação/Desconfirmação do cliente registrada"),
+            @ApiResponse(code = 400, message = "Erro na validação dos dados"),
+            @ApiResponse(code = 404, message = "Proposta não encontrada"),
+            @ApiResponse(code = 422, message = "Violação na etapa de cadastro"),
+            @ApiResponse(code = 500, message = "Erro inesperado")
+    })
     @RequestMapping(value = "/{id}/confirmacao", method = RequestMethod.POST)
     public ResponseEntity<Void> confirmaProposta(@PathVariable Integer id, @RequestBody PropostaConfirmacaoDTO objConfirmado) {
         Proposta proposta = service.find(id);
@@ -159,6 +214,14 @@ public class PropostaResource {
         return ResponseEntity.ok().build();
     }
 
+    @ApiOperation(value = "Confirmação/Desconfirmação da API de Validação para efetivação da Proposta")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Confirmação/Desconfirmação da API registrada"),
+            @ApiResponse(code = 400, message = "Erro na validação dos dados"),
+            @ApiResponse(code = 404, message = "Proposta não encontrada"),
+            @ApiResponse(code = 422, message = "Violação na etapa de cadastro"),
+            @ApiResponse(code = 500, message = "Erro inesperado")
+    })
     @RequestMapping(value = "/{id}/confirmacao-api", method = RequestMethod.POST)
     public ResponseEntity<Void> confirmaPropostaApi(@PathVariable Integer id, @RequestBody PropostaConfirmacaoDTO objConfirmado) {
         Proposta proposta = service.find(id);

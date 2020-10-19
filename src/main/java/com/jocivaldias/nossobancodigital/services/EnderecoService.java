@@ -3,8 +3,10 @@ package com.jocivaldias.nossobancodigital.services;
 import com.jocivaldias.nossobancodigital.domain.Endereco;
 import com.jocivaldias.nossobancodigital.dto.EnderecoNewDTO;
 import com.jocivaldias.nossobancodigital.repositories.EnderecoRepository;
+import com.jocivaldias.nossobancodigital.services.exception.DataIntegrityException;
 import com.jocivaldias.nossobancodigital.services.exception.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -33,8 +35,12 @@ public class EnderecoService {
     }
 
     public Endereco insert(Endereco obj) {
-        obj.setId(null);
-        return repo.save(obj);
+        try {
+            obj.setId(null);
+            return repo.save(obj);
+        } catch (DataIntegrityViolationException e) {
+            throw new DataIntegrityException("Cliente já possui endereço.");
+        }
     }
 
     public Endereco update(Endereco obj) {
