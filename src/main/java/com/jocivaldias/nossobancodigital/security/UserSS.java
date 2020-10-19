@@ -1,6 +1,6 @@
 package com.jocivaldias.nossobancodigital.security;
 
-import com.jocivaldias.nossobancodigital.domain.enums.Perfil;
+import com.jocivaldias.nossobancodigital.domain.enums.Role;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,18 +14,17 @@ public class UserSS implements UserDetails {
 
     private Integer id;
     private String email;
-    private String senha;
-    private String jocival;
+    private String password;
     private Collection<? extends GrantedAuthority> authorities;
 
     public UserSS() {
     }
 
-    public UserSS(Integer id, String email, String senha, Set<Perfil> perfis) {
+    public UserSS(Integer id, String email, String password, Set<Role> roles) {
         this.id = id;
         this.email = email;
-        this.senha = senha;
-        this.authorities = perfis.stream().map(x -> new SimpleGrantedAuthority(x.getDescricao())).collect(Collectors.toList());
+        this.password = password;
+        this.authorities = roles.stream().map(x -> new SimpleGrantedAuthority(x.getDescription())).collect(Collectors.toList());
     }
 
     @Override
@@ -40,7 +39,7 @@ public class UserSS implements UserDetails {
 
     @Override
     public String getPassword() {
-        return this.senha;
+        return this.password;
     }
 
     @Override
@@ -68,7 +67,7 @@ public class UserSS implements UserDetails {
         return true;
     }
 
-    public boolean hasRole(Perfil perfil) {
-        return getAuthorities().contains(new SimpleGrantedAuthority(perfil.getDescricao()));
+    public boolean hasRole(Role role) {
+        return getAuthorities().contains(new SimpleGrantedAuthority(role.getDescription()));
     }
 }

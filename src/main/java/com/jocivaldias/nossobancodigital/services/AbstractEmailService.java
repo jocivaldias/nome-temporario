@@ -1,8 +1,8 @@
 package com.jocivaldias.nossobancodigital.services;
 
-import com.jocivaldias.nossobancodigital.domain.Cliente;
-import com.jocivaldias.nossobancodigital.domain.Conta;
-import com.jocivaldias.nossobancodigital.domain.TokenAtivacao;
+import com.jocivaldias.nossobancodigital.domain.Account;
+import com.jocivaldias.nossobancodigital.domain.Client;
+import com.jocivaldias.nossobancodigital.domain.ActivationToken;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 
@@ -14,82 +14,82 @@ public abstract class AbstractEmailService implements EmailService{
     private String sender;
 
     @Override
-    public void bemVindoNovoCliente(Cliente obj) {
-        SimpleMailMessage smm = prepareBemVindoSimpleMailMessage(obj);
+    public void welcomeNewClient(Client obj) {
+        SimpleMailMessage smm = prepareWelcomeNewClientSimpleMailMessage(obj);
         simpleEmail(smm);
     }
 
-    protected SimpleMailMessage prepareBemVindoSimpleMailMessage(Cliente obj){
+    protected SimpleMailMessage prepareWelcomeNewClientSimpleMailMessage(Client obj){
         SimpleMailMessage smm = new SimpleMailMessage();
         smm.setTo(obj.getEmail());
         smm.setFrom(sender);
-        smm.setSubject("\nBem vindo ao Nosso Banco Digital!");
+        smm.setSubject("\nWelcome to Our Digital Bank!");
         smm.setSentDate(new Date(System.currentTimeMillis()));
         smm.setText(
-                "Prezado(a) Cliente, bem vindo ao banco digital\n\n"
-                + "Dados do Cliente:\n"
+                "Dear Customer, welcome to the digital bank\n\n"
+                + "Client's data:\n"
                 + obj.toString() + "\n\n"
-                + "Dados da Conta:\n"
-                + obj.getProposta().getConta().toString() + "\n\n"
-                + "Atenciosamente, nosso banco digital."
+                + "Account Information:\n"
+                + obj.getProposal().getAccount().toString() + "\n\n"
+                + "Sincerely, our digital bank."
         );
         return smm;
     }
 
     @Override
-    public void insistirConfirmacaoCliente(Cliente obj) {
-        SimpleMailMessage smm = prepareInsistirSimpleMailMessage(obj);
+    public void insistCustomerConfirmation(Client obj) {
+        SimpleMailMessage smm = prepareInsistCustomerConfirmationSimpleMailMessage(obj);
         simpleEmail(smm);
     }
 
 
-    protected SimpleMailMessage prepareInsistirSimpleMailMessage(Cliente obj){
+    protected SimpleMailMessage prepareInsistCustomerConfirmationSimpleMailMessage(Client obj){
         SimpleMailMessage smm = new SimpleMailMessage();
         smm.setTo(obj.getEmail());
         smm.setFrom(sender);
-        smm.setSubject("\nNão perca essa oportunidade - Venha para o Nosso Banco Digital!");
+        smm.setSubject("\nDon't miss this opportunity - Come to Our Digital Bank!");
         smm.setSentDate(new Date(System.currentTimeMillis()));
         smm.setText(
-                "Prezado(a) Cliente, percebemos que o senhor(a) não aceitou a proposta.\n\n"
-                        + "Confire seus dados abaixo e aceite nossa proposta: \n"
+                "Dear Customer, we understand that you did not accept the proposal.\n\n"
+                        + "Check your data below and accept our proposal: \n"
                         + obj.toString() + "\n\n"
-                        + "Não perca mais tempo!!! Venha para o banco digital"
+                        + "Don't waste any more time !!! Come to the digital bank"
         );
         return smm;
     }
 
-    public void registrarNovaSenha(TokenAtivacao tokenAtivacao){
-        SimpleMailMessage smm = prepareRegistrarNovaSenha(tokenAtivacao);
+    public void registerNewPassword(ActivationToken activationToken){
+        SimpleMailMessage smm = prepareRegisterNewPasswordSimpleMailMessage(activationToken);
         simpleEmail(smm);
     }
 
-    protected SimpleMailMessage prepareRegistrarNovaSenha(TokenAtivacao tokenAtivacao) {
+    protected SimpleMailMessage prepareRegisterNewPasswordSimpleMailMessage(ActivationToken activationToken) {
         SimpleMailMessage smm = new SimpleMailMessage();
-        smm.setTo(tokenAtivacao.getConta().getProposta().getCliente().getEmail());
+        smm.setTo(activationToken.getAccount().getProposal().getClient().getEmail());
         smm.setFrom(sender);
-        smm.setSubject("\nInstruções para cadastro de senha - Nosso Banco Digital: ");
+        smm.setSubject("\nPassword registration instructions - Our Digital Bank: ");
         smm.setSentDate(new Date(System.currentTimeMillis()));
         smm.setText(
-                "Prezado(a) Cliente, o token para cadastro de sua senha é: " + tokenAtivacao.getToken() + "\n\n"
-                        + "Atenciosamente, Nosso Banco Digital"
+                "Dear Customer, the token for registering your password is: " + activationToken.getToken() + "\n\n"
+                        + "Sincerely, Our Digital Bank"
         );
         return smm;
     }
 
-    public void senhaAtualizada(Conta conta){
-        SimpleMailMessage smm = prepareSenhaAtualizada(conta);
+    public void updatedPassword(Account account){
+        SimpleMailMessage smm = prepareUpdatedPasswordSimpleMailMessage(account);
         simpleEmail(smm);
     }
 
-    protected SimpleMailMessage prepareSenhaAtualizada(Conta conta) {
+    protected SimpleMailMessage prepareUpdatedPasswordSimpleMailMessage(Account account) {
         SimpleMailMessage smm = new SimpleMailMessage();
-        smm.setTo(conta.getProposta().getCliente().getEmail());
+        smm.setTo(account.getProposal().getClient().getEmail());
         smm.setFrom(sender);
-        smm.setSubject("\nSenha Atualizada no Sistema - Nosso Banco Digital: ");
+        smm.setSubject("\nPassword Updated in the System - Our Digital Bank: ");
         smm.setSentDate(new Date(System.currentTimeMillis()));
         smm.setText(
-                "Prezado(a) Cliente, sua senha foi atualizada no sistema" + "\n\n"
-                        + "Atenciosamente, Nosso Banco Digital"
+                "Dear Customer, your password has been updated in the system" + "\n\n"
+                        + "Sincerely, Our Digital Bank"
         );
         return smm;
     }

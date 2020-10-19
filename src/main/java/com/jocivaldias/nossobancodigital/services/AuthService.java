@@ -1,13 +1,13 @@
 package com.jocivaldias.nossobancodigital.services;
 
-import com.jocivaldias.nossobancodigital.domain.Cliente;
-import com.jocivaldias.nossobancodigital.domain.Conta;
-import com.jocivaldias.nossobancodigital.domain.TokenAtivacao;
-import com.jocivaldias.nossobancodigital.dto.CadastrarSenhaDTO;
-import com.jocivaldias.nossobancodigital.dto.SolicitarTokenDTO;
-import com.jocivaldias.nossobancodigital.repositories.ClienteRepository;
-import com.jocivaldias.nossobancodigital.repositories.ContaRepository;
-import com.jocivaldias.nossobancodigital.repositories.TokenAtivacaoRepository;
+import com.jocivaldias.nossobancodigital.domain.Client;
+import com.jocivaldias.nossobancodigital.domain.Account;
+import com.jocivaldias.nossobancodigital.domain.ActivationToken;
+import com.jocivaldias.nossobancodigital.dto.registerPasswordDTO;
+import com.jocivaldias.nossobancodigital.dto.RequestTokenDTO;
+import com.jocivaldias.nossobancodigital.repositories.ClientRepository;
+import com.jocivaldias.nossobancodigital.repositories.AccountRepository;
+import com.jocivaldias.nossobancodigital.repositories.ActivationTokenRepository;
 import com.jocivaldias.nossobancodigital.services.exception.InvalidTokenException;
 import com.jocivaldias.nossobancodigital.services.exception.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,17 +22,17 @@ import java.util.Random;
 @Service
 public class AuthService {
 
-    private final ClienteRepository clienteRepository;
+    private final ClientRepository clientRepository;
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    private final ContaRepository contaRepository;
+    private final AccountRepository accountRepository;
 
     private final EmailService emailService;
 
-    private final TokenAtivacaoRepository tokenAtivacaoRepository;
+    private final ActivationTokenRepository activationTokenRepository;
 
-    private final ContaService contaService;
+    private final AccountService accountService;
 
     private Random rand = new Random();
 
@@ -40,62 +40,62 @@ public class AuthService {
     private Long expiration;
 
     @Autowired
-    public AuthService(ClienteRepository clienteRepository, BCryptPasswordEncoder bCryptPasswordEncoder,
-                       EmailService emailService, TokenAtivacaoRepository tokenAtivacaoRepository,
-                       ContaRepository contaRepository, ContaService contaService) {
-        this.clienteRepository = clienteRepository;
+    public AuthService(ClientRepository clientRepository, BCryptPasswordEncoder bCryptPasswordEncoder,
+                       EmailService emailService, ActivationTokenRepository activationTokenRepository,
+                       AccountRepository accountRepository, AccountService accountService) {
+        this.clientRepository = clientRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.emailService = emailService;
-        this.tokenAtivacaoRepository = tokenAtivacaoRepository;
-        this.contaRepository = contaRepository;
-        this.contaService = contaService;
+        this.activationTokenRepository = activationTokenRepository;
+        this.accountRepository = accountRepository;
+        this.accountService = accountService;
     }
 
-    public void solicitarToken(SolicitarTokenDTO solicitarTokenDTO) {
-        Cliente cliente = clienteRepository.findByEmailAndCpf(solicitarTokenDTO.getEmail(), solicitarTokenDTO.getCpf());
+    public void solicitarToken(RequestTokenDTO requestTokenDTO) {
+        Client client = clientRepository.findByEmailAndCpf(requestTokenDTO.getEmail(), requestTokenDTO.getCpf());
 
-        if(cliente == null){
+        if(client == null){
             throw new ObjectNotFoundException("Cliente não encontrado");
         }
 
-        TokenAtivacao tokenAtivacao = new TokenAtivacao();
-        tokenAtivacao.setConta(cliente.getProposta().getConta());
-        tokenAtivacao.setUsado(false);
-        tokenAtivacao.setId(null);
-        tokenAtivacao.setToken(newToken(6));
-        tokenAtivacao.setDataExpiracao(
+        ActivationToken activationToken = new ActivationToken();
+        activationToken.setAccount(client.getProposal().getAccount());
+        activationToken.setUsed(false);
+        activationToken.setId(null);
+        activationToken.setToken(newToken(6));
+        activationToken.setExpirationDate(
                 LocalDateTime.now().plus(expiration, ChronoField.MILLI_OF_DAY.getBaseUnit())
         );
 
-        tokenAtivacao = tokenAtivacaoRepository.save(tokenAtivacao);
-        emailService.registrarNovaSenha(tokenAtivacao);
+        activationToken = activationTokenRepository.save(activationToken);
+        emailService.registerNewPassword(activationToken);
     }
 
-    public void cadastrarSenha(CadastrarSenhaDTO cadastrarSenhaDTO) {
-        Conta conta = contaRepository.findByPropostaClienteEmailAndPropostaClienteCpf(
-                cadastrarSenhaDTO.getEmail(), cadastrarSenhaDTO.getCpf());
+    public void savePassword(registerPasswordDTO registerPasswordDTO) {
+        Account account = accountRepository.findByProposalClientEmailAndProposalClientCpf(
+                registerPasswordDTO.getEmail(), registerPasswordDTO.getCpf());
 
-        if(conta == null){
-            throw new ObjectNotFoundException("Conta não encontrada");
+        if(account == null){
+            throw new ObjectNotFoundException("Account not found");
         }
 
-        TokenAtivacao tokenAtivacao = tokenAtivacaoRepository.findByContaIdAndToken(conta.getId(),
-                cadastrarSenhaDTO.getToken());
+        ActivationToken activationToken = activationTokenRepository.findByAccountIdAndToken(account.getId(),
+                registerPasswordDTO.getToken());
 
-        if(tokenAtivacao == null
-                || tokenAtivacao.getUsado()
-                || tokenAtivacao.getDataExpiracao().isBefore(LocalDateTime.now())
+        if(activationToken == null
+                || activationToken.getUsed()
+                || activationToken.getExpirationDate().isBefore(LocalDateTime.now())
         ) {
-            throw new InvalidTokenException("Token de validação inválido");
+            throw new InvalidTokenException("Invalid activation token");
         }
 
-        tokenAtivacao.setUsado(true);
-        tokenAtivacaoRepository.save(tokenAtivacao);
+        activationToken.setUsed(true);
+        activationTokenRepository.save(activationToken);
 
-        conta.setSenha(bCryptPasswordEncoder.encode(cadastrarSenhaDTO.getSenha()));
+        account.setPassword(bCryptPasswordEncoder.encode(registerPasswordDTO.getPassword()));
 
-        contaService.updateSenha(conta);
-        emailService.senhaAtualizada(conta);
+        accountService.updatePassword(account);
+        emailService.updatedPassword(account);
     }
 
     private String newToken(int size) {
@@ -108,11 +108,11 @@ public class AuthService {
 
     private char randomChar() {
         int opt = rand.nextInt(3);
-        if( opt == 0 ){ // gera um digito
+        if( opt == 0 ){
             return (char) (rand.nextInt(10) + 48);
-        } else if( opt == 1){ // gera letra maiscula
+        } else if( opt == 1){
             return (char) (rand.nextInt(26) + 65);
-        } else { //gera letra minuscula
+        } else {
             return (char) (rand.nextInt(26) + 97);
         }
     }

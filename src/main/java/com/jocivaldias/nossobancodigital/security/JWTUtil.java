@@ -25,7 +25,7 @@ public class JWTUtil {
                 .compact();
     }
 
-    public boolean tokenValido(String token) {
+    public boolean ValidToken(String token) {
         Claims claims = getClaims(token);
 
         if(claims != null){

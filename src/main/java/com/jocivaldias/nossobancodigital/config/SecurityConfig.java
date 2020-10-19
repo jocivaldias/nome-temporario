@@ -31,26 +31,26 @@ import java.util.Arrays;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private UserDetailsService userDetailsService;
+    private final UserDetailsService userDetailsService;
 
-    private Environment env;
+    private final Environment env;
 
-    private JWTUtil jwtUtil;
+    private final JWTUtil jwtUtil;
 
     private static final String[] PUBLIC_MATCHERS = {
             "/h2-console/**"
     };
 
     private static final String[] PUBLIC_MATCHERS_GET = {
-            "/propostas/**"
+            "/proposals/**"
     };
 
     private static final String[] PUBLIC_MATCHERS_POST = {
-            "/propostas/**",
-            "/transferencias/**",
-            "/auth/cadastrar-senha/**",
-            "/auth/esqueceu-senha/**",
-            "/auth/solicitar-token/**",
+            "/proposals/**",
+            "/transfers/**",
+            "/auth/create-password/**",
+            "/auth/forgot-password/**",
+            "/auth/request-token/**",
     };
 
     @Autowired
@@ -62,7 +62,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    public void configure(WebSecurity web) throws Exception {
+    public void configure(WebSecurity web) {
         web.ignoring().antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources/**", "/configuration/**",
                 "/swagger-ui.html", "/webjars/**");
     }

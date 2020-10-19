@@ -1,7 +1,7 @@
 package com.jocivaldias.nossobancodigital.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jocivaldias.nossobancodigital.dto.CredenciaisDTO;
+import com.jocivaldias.nossobancodigital.dto.CredentialsDTO;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -33,11 +33,11 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                                 HttpServletResponse res) throws AuthenticationException {
 
         try {
-            CredenciaisDTO creds = new ObjectMapper().readValue(req.getInputStream(), CredenciaisDTO.class);
+            CredentialsDTO credentialsDTO = new ObjectMapper().readValue(req.getInputStream(), CredentialsDTO.class);
 
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                    creds.getAgencia()+creds.getConta(),
-                    creds.getSenha(), new ArrayList<>());
+                    credentialsDTO.getBranchNumber()+credentialsDTO.getAccountNumber(),
+                    credentialsDTO.getPassword(), new ArrayList<>());
 
             Authentication auth = authenticationManager.authenticate(authToken);
 
@@ -73,8 +73,8 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             long date = new Date().getTime();
             return "{\"timestamp\": " + date + ", "
                     + "\"status\": 401, "
-                    + "\"error\": \"Não autorizado\", "
-                    + "\"message\": \"Agência/Conta ou senha inválidos\", "
+                    + "\"error\": \"Not authorized\", "
+                    + "\"message\": \"Invalid Branch/Account or password\", "
                     + "\"path\": \"/login\"}";
         }
     }

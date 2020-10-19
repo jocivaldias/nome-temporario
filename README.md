@@ -22,14 +22,14 @@ Nosso Banco Digital foi desenvolvido como parte do processo seletivo para o **Bo
 
 ## Funcionalidades
 
-- [x] Um cliente que deseja abrir uma conta no banco pode abrir uma proposta enviando:
+- [x] Um client que deseja abrir uma account no banco pode abrir uma proposal enviando:
   - [x] seus dados básicos;
   - [x] seu endereço;
   - [x] uma cópia do CPF;
-- [x] Após criar a proposta, o cliente revisa a mesma podendo aceitar ou não.
-  - [x] Após aceitar a proposta, a mesma é enviada para uma API externa que pode aprovar ou não a abertura de conta para o cliente.
-  - [x] Após recusar a proposta, um e-mail é enviado ao cliente solicitando que ele aprove.
-- [x] Caso a API externa aprove a proposta uma conta no banco é aberta ao cliente.
+- [x] Após criar a proposal, o client revisa a mesma podendo aceitar ou não.
+  - [x] Após aceitar a proposal, a mesma é enviada para uma API externa que pode aprovar ou não a abertura de account para o client.
+  - [x] Após recusar a proposal, um e-mail é enviado ao client solicitando que ele aprove.
+- [x] Caso a API externa aprove a proposal uma account no banco é aberta ao client.
 - [x] Possibilidade de receber transferências de valores para as contas.
 
 ## Modelo de Dados
@@ -62,9 +62,9 @@ O modelo de dados final da aplicação pode ser visto abaixo:
 
 ## Executando o aplicativo localmente
 
-* O perfil ativo padrão é **`test`**. No perfil **`test`**, o aplicativo usa o banco de dados **H2**.
+* O role ativo padrão é **`test`**. No role **`test`**, o aplicativo usa o banco de dados **H2**.
 
-* Você precisa ter o **MySQL** instalado em sua máquina para executar o aplicativo no perfil **`dev`**. Usando o `MySQL Workbench` ou em qualquer outro cliente/console MySQL, crie um banco de dados chamado **nossobancodigital**
+* Você precisa ter o **MySQL** instalado em sua máquina para executar o aplicativo no role **`dev`**. Usando o `MySQL Workbench` ou em qualquer outro client/console MySQL, crie um banco de dados chamado **nossobancodigital**
 
 ~~~sql
 create database nossobancodigital;

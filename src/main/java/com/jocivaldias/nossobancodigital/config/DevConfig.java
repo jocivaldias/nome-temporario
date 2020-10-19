@@ -37,7 +37,6 @@ public class DevConfig {
         return new FileSystemStorageService();
     }
 
-    //Observe que se eu substituir MockEmailService por SmtpEmailService poderia enviar e-mails.
     @Bean
     public EmailService emailService(){
         return new MockEmailService();

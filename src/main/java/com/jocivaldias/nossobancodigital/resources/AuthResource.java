@@ -1,7 +1,7 @@
 package com.jocivaldias.nossobancodigital.resources;
 
-import com.jocivaldias.nossobancodigital.dto.CadastrarSenhaDTO;
-import com.jocivaldias.nossobancodigital.dto.SolicitarTokenDTO;
+import com.jocivaldias.nossobancodigital.dto.registerPasswordDTO;
+import com.jocivaldias.nossobancodigital.dto.RequestTokenDTO;
 import com.jocivaldias.nossobancodigital.security.JWTUtil;
 import com.jocivaldias.nossobancodigital.security.UserSS;
 import com.jocivaldias.nossobancodigital.services.AuthService;
@@ -25,7 +25,7 @@ public class AuthResource {
 
     JWTUtil jwtUtil;
 
-    private AuthService authService;
+    private final AuthService authService;
 
     @Autowired
     public AuthResource(JWTUtil jwtUtil, AuthService authService) {
@@ -33,39 +33,39 @@ public class AuthResource {
         this.authService = authService;
     }
 
-    @ApiOperation(value = "Cliente solicita um token para cadastrar uma nova senha")
+    @ApiOperation(value = "Customer requests a token to register a new password")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Envia um token ao e-mail do cliente"),
-            @ApiResponse(code = 404, message = "Cliente não encontrado"),
-            @ApiResponse(code = 500, message = "Erro inesperado")
+            @ApiResponse(code = 200, message = "Send a token to the client's email"),
+            @ApiResponse(code = 404, message = "Client not found"),
+            @ApiResponse(code = 500, message = "Unexpected error")
     })
-    @RequestMapping(value="/solicitar-token", method= RequestMethod.POST)
-    public ResponseEntity<Void> solicitarToken(@Valid @RequestBody SolicitarTokenDTO solicitarTokenDTO){
-        authService.solicitarToken(solicitarTokenDTO);
+    @RequestMapping(value="/request-token", method= RequestMethod.POST)
+    public ResponseEntity<Void> requestToken(@Valid @RequestBody RequestTokenDTO requestTokenDTO){
+        authService.solicitarToken(requestTokenDTO);
         return ResponseEntity.ok().build();
     }
 
-    @ApiOperation(value = "Cliente cadastra uma nova senha")
+    @ApiOperation(value = "Customer registers a new password")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Senha criada e e-mail enviado ao cliente"),
-            @ApiResponse(code = 400, message = "Token já expirado ou inválido"),
-            @ApiResponse(code = 404, message = "Cliente não encontrado"),
-            @ApiResponse(code = 500, message = "Erro inesperado")
+            @ApiResponse(code = 200, message = "Password created and email sent to the customer"),
+            @ApiResponse(code = 400, message = "Token already expired or invalid"),
+            @ApiResponse(code = 404, message = "Client not found"),
+            @ApiResponse(code = 500, message = "Unexpected error")
     })
-    @RequestMapping(value="/cadastrar-senha", method= RequestMethod.POST)
-    public ResponseEntity<Void> cadastrarSenha(@Valid @RequestBody CadastrarSenhaDTO cadastrarSenhaDTO){
-        authService.cadastrarSenha(cadastrarSenhaDTO);
+    @RequestMapping(value="/create-password", method= RequestMethod.POST)
+    public ResponseEntity<Void> createPassword(@Valid @RequestBody registerPasswordDTO registerPasswordDTO){
+        authService.savePassword(registerPasswordDTO);
         return ResponseEntity.ok().build();
     }
 
-    @ApiOperation(value = "Cliente renova o token de acesso ao sistema")
+    @ApiOperation(value = "Client renews the system access token")
     @ApiResponses(value = {
-            @ApiResponse(code = 204, message = "Token é enviado no header da resposta"),
-            @ApiResponse(code = 403, message = "Token já expirado ou inválido"),
-            @ApiResponse(code = 500, message = "Erro inesperado")
+            @ApiResponse(code = 204, message = "Token is sent in the response header"),
+            @ApiResponse(code = 403, message = "Token already expired or invalid"),
+            @ApiResponse(code = 500, message = "Unexpected error")
     })
-    @RequestMapping(value="/renovar-token", method= RequestMethod.POST)
-    public ResponseEntity<Void> renovarToken(HttpServletResponse response){
+    @RequestMapping(value="/renew-token", method= RequestMethod.POST)
+    public ResponseEntity<Void> renewToken(HttpServletResponse response){
         UserSS user = UserService.authenticated();
         String token = jwtUtil.generateToken(user.getUsername());
         response.addHeader("Authorization", "Bearer " + token);
@@ -73,15 +73,15 @@ public class AuthResource {
         return ResponseEntity.noContent().build();
     }
 
-    @ApiOperation(value = "Cliente solicita uma nova senha")
+    @ApiOperation(value = "Customer requests a new password")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Senha criada e e-mail enviado ao cliente"),
-            @ApiResponse(code = 404, message = "Cliente não encontrado"),
-            @ApiResponse(code = 500, message = "Erro inesperado")
+            @ApiResponse(code = 200, message = "Password created and email sent to the customer"),
+            @ApiResponse(code = 404, message = "Client not found"),
+            @ApiResponse(code = 500, message = "Unexpected error")
     })
-    @RequestMapping(value="/esqueceu-senha", method= RequestMethod.POST)
-    public ResponseEntity<Void> esqueceuSenha(@Valid @RequestBody SolicitarTokenDTO solicitarTokenDTO){
-        authService.solicitarToken(solicitarTokenDTO);
+    @RequestMapping(value="/forgot-password", method= RequestMethod.POST)
+    public ResponseEntity<Void> forgotPassword(@Valid @RequestBody RequestTokenDTO requestTokenDTO){
+        authService.solicitarToken(requestTokenDTO);
         return ResponseEntity.noContent().build();
     }
 

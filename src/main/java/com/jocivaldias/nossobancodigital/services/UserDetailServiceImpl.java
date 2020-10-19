@@ -1,10 +1,8 @@
 package com.jocivaldias.nossobancodigital.services;
 
-import com.jocivaldias.nossobancodigital.domain.Cliente;
-import com.jocivaldias.nossobancodigital.domain.Conta;
-import com.jocivaldias.nossobancodigital.domain.enums.Perfil;
-import com.jocivaldias.nossobancodigital.repositories.ClienteRepository;
-import com.jocivaldias.nossobancodigital.repositories.ContaRepository;
+import com.jocivaldias.nossobancodigital.domain.Account;
+import com.jocivaldias.nossobancodigital.domain.enums.Role;
+import com.jocivaldias.nossobancodigital.repositories.AccountRepository;
 import com.jocivaldias.nossobancodigital.security.UserSS;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,24 +16,24 @@ import java.util.Set;
 @Service
 public class UserDetailServiceImpl implements UserDetailsService {
 
-    private final ContaRepository contaRepository;
+    private final AccountRepository accountRepository;
 
     @Autowired
-    public UserDetailServiceImpl(ContaRepository contaRepository) {
-        this.contaRepository = contaRepository;
+    public UserDetailServiceImpl(AccountRepository accountRepository) {
+        this.accountRepository = accountRepository;
     }
 
     @Override
-    public UserDetails loadUserByUsername(String agenciaConta) throws UsernameNotFoundException {
-        Conta conta = contaRepository.findByAgenciaAndConta(agenciaConta.substring(0, 4), agenciaConta.substring(4, 12));
+    public UserDetails loadUserByUsername(String branchAccount) throws UsernameNotFoundException {
+        Account account = accountRepository.findByBranchNumberAndAccountNumber(branchAccount.substring(0, 4), branchAccount.substring(4, 12));
 
-        if( conta == null ){
-            throw new UsernameNotFoundException(agenciaConta);
+        if( account == null ){
+            throw new UsernameNotFoundException(branchAccount);
         }
 
-        Set<Perfil> perfis = new HashSet<>();
-        perfis.add(Perfil.CLIENTE);
-        return new UserSS(conta.getId(), agenciaConta, conta.getSenha(), perfis);
+        Set<Role> roles = new HashSet<>();
+        roles.add(Role.CLIENT);
+        return new UserSS(account.getId(), branchAccount, account.getPassword(), roles);
     }
 
 }

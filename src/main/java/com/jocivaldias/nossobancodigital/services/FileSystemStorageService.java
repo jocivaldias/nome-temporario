@@ -28,11 +28,11 @@ public class FileSystemStorageService implements StorageService{
     public void store(MultipartFile file, String fileName) {
         try {
             if (file.isEmpty()) {
-                throw new StorageException("Erro ao salvar arquivo vazio " + fileName);
+                throw new StorageException("Error saving empty file " + fileName);
             }
 
             if(!contentTypes.contains(file.getContentType())) {
-                throw new StorageFileContentException("Conteúdo do arquivo não permitido. Permitidos: " + contentTypes);
+                throw new StorageFileContentException("File content not allowed. Allowed: " + contentTypes);
             }
 
             try (InputStream inputStream = file.getInputStream()) {
@@ -41,7 +41,7 @@ public class FileSystemStorageService implements StorageService{
             }
         }
         catch (IOException e) {
-            throw new StorageException("Erro ao salvar arquivo " + fileName, e);
+                throw new StorageException("Error saving file " + fileName, e);
         }
     }
 
@@ -56,7 +56,7 @@ public class FileSystemStorageService implements StorageService{
             Files.createDirectories(Paths.get(rootDir));
         }
         catch (IOException e) {
-            throw new StorageException("Não foi possível inicializar o sistema de armazenamento", e);
+            throw new StorageException("The storage system could not be initialized", e);
         }
     }
 
@@ -64,7 +64,7 @@ public class FileSystemStorageService implements StorageService{
     public Resource loadAsResource(String fileName) {
         try {
             if(fileName == null){
-                throw new StorageFileNotFoundException("Este arquivo não existe");
+                throw new StorageFileNotFoundException("This file does not exist");
             }
             Path file = Paths.get(rootDir).resolve(fileName);
             Resource resource = new UrlResource(file.toUri());
@@ -73,11 +73,11 @@ public class FileSystemStorageService implements StorageService{
             }
             else {
                 throw new StorageFileNotFoundException(
-                        "Não foi possível ler o arquivo: " + fileName);
+                        "Couldn't read the file: " + fileName);
             }
         }
         catch (MalformedURLException e) {
-            throw new StorageFileNotFoundException("Não foi possível ler o arquivo: " + fileName, e);
+            throw new StorageFileNotFoundException("Could not read the file: " + fileName, e);
         }
     }
 
