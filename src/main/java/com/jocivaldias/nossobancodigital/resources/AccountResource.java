@@ -1,6 +1,7 @@
 package com.jocivaldias.nossobancodigital.resources;
 
 import com.jocivaldias.nossobancodigital.domain.Account;
+import com.jocivaldias.nossobancodigital.dto.AccountDTO;
 import com.jocivaldias.nossobancodigital.services.AccountService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -16,11 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/accounts")
 public class AccountResource {
 
-    private final AccountService service;
+    private final AccountService accountService;
 
     @Autowired
-    public AccountResource(AccountService service) {
-        this.service = service;
+    public AccountResource(AccountService accountService) {
+        this.accountService = accountService;
     }
 
     @ApiOperation(value = "Returns the account of the authenticated client on the system")
@@ -31,9 +32,10 @@ public class AccountResource {
             @ApiResponse(code = 500, message = "Unexpected error")
     })
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Account> findAccount(@PathVariable Integer id) {
-        Account obj = service.find(id);
-        return ResponseEntity.ok().body(obj);
+    public ResponseEntity<AccountDTO> findAccount(@PathVariable Integer id) {
+        Account account = accountService.find(id);
+        AccountDTO accountDTO = accountService.toDTO(account);
+        return ResponseEntity.ok().body(accountDTO);
     }
 
 }

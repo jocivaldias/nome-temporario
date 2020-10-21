@@ -3,9 +3,10 @@ package com.jocivaldias.nossobancodigital.services;
 import com.jocivaldias.nossobancodigital.domain.Account;
 import com.jocivaldias.nossobancodigital.domain.Proposal;
 import com.jocivaldias.nossobancodigital.domain.enums.ProposalStatus;
+import com.jocivaldias.nossobancodigital.dto.AccountDTO;
 import com.jocivaldias.nossobancodigital.repositories.AccountRepository;
 import com.jocivaldias.nossobancodigital.security.UserSS;
-import com.jocivaldias.nossobancodigital.services.exception.AprovacaoApiException;
+import com.jocivaldias.nossobancodigital.services.exception.ApprovalApiException;
 import com.jocivaldias.nossobancodigital.services.exception.AuthorizationException;
 import com.jocivaldias.nossobancodigital.services.exception.ObjectNotFoundException;
 import org.slf4j.Logger;
@@ -22,6 +23,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.time.Duration;
 import java.util.Optional;
@@ -32,17 +34,17 @@ public class AccountService {
 
     private static final Logger logger = LoggerFactory.getLogger(AccountService.class);
 
-    private final AccountRepository repo;
+    private final AccountRepository accountRepository;
     private final ProposalService proposalService;
 
-    private Random rand = new Random();
+    private Random randomGenerator = new Random();
 
     @Value("${url.api.aprovacao}")
     private String approvalApiUrl;
 
     @Autowired
-    public AccountService(AccountRepository repo, ProposalService proposalService) {
-        this.repo = repo;
+    public AccountService(AccountRepository accountRepository, ProposalService proposalService) {
+        this.accountRepository = accountRepository;
         this.proposalService = proposalService;
     }
 
@@ -53,15 +55,15 @@ public class AccountService {
             throw new AuthorizationException("Access denied");
         }
 
-        Optional<Account> obj = repo.findById(id);
-        return obj.orElseThrow(() -> new ObjectNotFoundException(
+        Optional<Account> account = accountRepository.findById(id);
+        return account.orElseThrow(() -> new ObjectNotFoundException(
                 "Account not found! Id: " + id + ", Type: " + Account.class.getName()
         ));
     }
 
-    public Account insert(Account obj) {
-        obj.setId(null);
-        return repo.save(obj);
+    public Account insert(Account account) {
+        account.setId(null);
+        return accountRepository.save(account);
     }
 
     public void requestProposalApproval(Proposal proposal) {
@@ -91,19 +93,19 @@ public class AccountService {
                             || clientResponse.getStatusCode().is4xxClientError()) {
                         proposalService.updateStatus(proposal, ProposalStatus.RESEND_SYSTEM_ACCEPTANCE);
                         logger.error("Error during account approval, status: [{}]", clientResponse.getStatusCode());
-                        throw new AprovacaoApiException("Error during account approval");
+                        throw new ApprovalApiException("Error during account approval");
                     }
                 })
                 .doOnError((throwable) -> {
                     logger.error("Request could not be sent");
-                    throw new AprovacaoApiException("Error sending request");
+                    throw new ApprovalApiException("Error sending request");
                 })
                 .retryWhen(Retry.backoff(2, Duration.ofSeconds(5))
                         .doAfterRetry(retrySignal -> {
                             logger.info("Attempts " + retrySignal.totalRetries());
                         })
                         .onRetryExhaustedThrow((retryBackoffSpec, retrySignal)
-                                -> new AprovacaoApiException("Could not connect to the service")))
+                                -> new ApprovalApiException("Could not connect to the service")))
                 .subscribe();
     }
 
@@ -113,30 +115,35 @@ public class AccountService {
         account.setBranchNumber(generatesRandom(4));
         account.setAccountNumber(generatesRandom(8));
         account.setBankNumber("341");
-        account.setBalance(0.00);
+        account.setBalance(BigDecimal.ZERO);
 
         account.setProposal(proposal);
         proposal.setAccount(account);
 
-        account = repo.save(account);
+        account = accountRepository.save(account);
 
         return account;
     }
 
-    public void updatePassword(Account obj) {
-        Account saveObj = repo.findById(obj.getId()).orElseThrow(
+    public void updatePassword(Account dataAccount) {
+        Account saveAccount = accountRepository.findById(dataAccount.getId()).orElseThrow(
                 () -> new ObjectNotFoundException("Account not found"));
 
-        saveObj.setPassword(obj.getPassword());
-        repo.save(saveObj);
+        saveAccount.setPassword(dataAccount.getPassword());
+        accountRepository.save(saveAccount);
+    }
+
+    public synchronized void updateBalance(Account originAccount, BigDecimal valor) {
+        Account saveAccount = accountRepository.findById(originAccount.getId()).orElseThrow(
+                () -> new ObjectNotFoundException("Account not found"));
+        originAccount.setBalance(saveAccount.getBalance().add(valor));
+        accountRepository.save(originAccount);
     }
 
 
-    public synchronized void updateBalance(Account obj, Double valor) {
-        Account saveObj = repo.findById(obj.getId()).orElseThrow(
-                () -> new ObjectNotFoundException("Account not found"));
-        obj.setBalance(saveObj.getBalance() + valor);
-        repo.save(obj);
+    public AccountDTO toDTO(Account account) {
+        return new AccountDTO(account.getBranchNumber(), account.getAccountNumber(), account.getBankNumber(),
+                account.getProposal(), account.getBalance());
     }
 
     private ExchangeFilterFunction logRequest() {
@@ -154,15 +161,14 @@ public class AccountService {
     }
 
     private String generatesRandom(int size){
-        char[] vet = new char[size];
+        char[] randomString = new char[size];
         for( int i=0; i<size; i++){
-            vet[i] = randomDigitChar();
+            randomString[i] = randomDigitChar();
         }
-        return new String(vet);
+        return new String(randomString);
     }
 
     private char randomDigitChar() {
-        return (char) (rand.nextInt(10) + 48);
+        return (char) (randomGenerator.nextInt(10) + 48);
     }
-
 }

@@ -3,7 +3,7 @@ package com.jocivaldias.nossobancodigital.services;
 import com.jocivaldias.nossobancodigital.domain.Client;
 import com.jocivaldias.nossobancodigital.domain.Account;
 import com.jocivaldias.nossobancodigital.domain.ActivationToken;
-import com.jocivaldias.nossobancodigital.dto.registerPasswordDTO;
+import com.jocivaldias.nossobancodigital.dto.RegisterPasswordDTO;
 import com.jocivaldias.nossobancodigital.dto.RequestTokenDTO;
 import com.jocivaldias.nossobancodigital.repositories.ClientRepository;
 import com.jocivaldias.nossobancodigital.repositories.AccountRepository;
@@ -71,7 +71,7 @@ public class AuthService {
         emailService.registerNewPassword(activationToken);
     }
 
-    public void savePassword(registerPasswordDTO registerPasswordDTO) {
+    public void savePassword(RegisterPasswordDTO registerPasswordDTO) {
         Account account = accountRepository.findByProposalClientEmailAndProposalClientCpf(
                 registerPasswordDTO.getEmail(), registerPasswordDTO.getCpf());
 
@@ -99,18 +99,18 @@ public class AuthService {
     }
 
     private String newToken(int size) {
-        char[] vet = new char[size];
+        char[] randomToken = new char[size];
         for( int i=0; i<size; i++){
-            vet[i] = randomChar();
+            randomToken[i] = randomChar();
         }
-        return new String(vet);
+        return new String(randomToken);
     }
 
     private char randomChar() {
-        int opt = rand.nextInt(3);
-        if( opt == 0 ){
+        int option = rand.nextInt(3);
+        if( option == 0 ){
             return (char) (rand.nextInt(10) + 48);
-        } else if( opt == 1){
+        } else if( option == 1){
             return (char) (rand.nextInt(26) + 65);
         } else {
             return (char) (rand.nextInt(26) + 97);

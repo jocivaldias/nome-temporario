@@ -3,7 +3,7 @@ package com.jocivaldias.nossobancodigital.resources;
 import com.jocivaldias.nossobancodigital.domain.Address;
 import com.jocivaldias.nossobancodigital.domain.Proposal;
 import com.jocivaldias.nossobancodigital.domain.enums.ProposalStatus;
-import com.jocivaldias.nossobancodigital.dto.newAddressDTO;
+import com.jocivaldias.nossobancodigital.dto.NewAddressDTO;
 import com.jocivaldias.nossobancodigital.dto.ProposalConfirmationDTO;
 import com.jocivaldias.nossobancodigital.dto.ProposalDTO;
 import com.jocivaldias.nossobancodigital.dto.NewProposalDTO;
@@ -27,11 +27,9 @@ import java.net.URI;
 @RequestMapping(value = "/proposals")
 public class ProposalResource {
 
-    private final ProposalService service;
+    private final ProposalService proposalService;
 
     private final AddressService addressService;
-
-    private final ProposalService proposalService;
 
     private final StorageService storageService;
 
@@ -40,11 +38,10 @@ public class ProposalResource {
     private final EmailService emailService;
 
     @Autowired
-    public ProposalResource(ProposalService service, AddressService addressService, ProposalService proposalService,
+    public ProposalResource(ProposalService proposalService, AddressService addressService,
                             StorageService storageService, AccountService accountService, EmailService emailService) {
-        this.service = service;
-        this.addressService = addressService;
         this.proposalService = proposalService;
+        this.addressService = addressService;
         this.storageService = storageService;
         this.accountService = accountService;
         this.emailService = emailService;
@@ -58,7 +55,7 @@ public class ProposalResource {
     })
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<Proposal> findProposal(@PathVariable Integer id) {
-        Proposal obj = service.find(id);
+        Proposal obj = proposalService.find(id);
         return ResponseEntity.ok().body(obj);
     }
 
@@ -69,15 +66,15 @@ public class ProposalResource {
             @ApiResponse(code = 500, message = "Unexpected error")
     })
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Void> createProposal(@Valid @RequestBody NewProposalDTO objDto) {
-        Proposal obj = service.fromDTO(objDto);
-        obj.setStatus(ProposalStatus.OPENED);
-        obj = service.insert(obj);
+    public ResponseEntity<Void> createProposal(@Valid @RequestBody NewProposalDTO newProposalDTO) {
+        Proposal proposal = proposalService.fromDTO(newProposalDTO);
+        proposal.setStatus(ProposalStatus.OPENED);
+        proposal = proposalService.insert(proposal);
 
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentContextPath()
                 .path("/proposals/{id}/address")
-                .buildAndExpand(obj.getId())
+                .buildAndExpand(proposal.getId())
                 .toUri();
 
         return ResponseEntity.created(uri).build();
@@ -91,10 +88,10 @@ public class ProposalResource {
             @ApiResponse(code = 500, message = "Unexpected error")
     })
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<Void> editProposal(@PathVariable Integer id, @Valid @RequestBody ProposalDTO objDto) {
-        Proposal obj = service.fromDTO(objDto);
-        obj.setId(id);
-        service.update(obj);
+    public ResponseEntity<Void> editProposal(@PathVariable Integer id, @Valid @RequestBody ProposalDTO proposalDTO) {
+        Proposal proposal = proposalService.fromDTO(proposalDTO);
+        proposal.setId(id);
+        proposalService.update(proposal);
         return ResponseEntity.noContent().build();
     }
 
@@ -106,13 +103,13 @@ public class ProposalResource {
             @ApiResponse(code = 500, message = "Unexpected error")
     })
     @RequestMapping(value = "/{id}/address", method = RequestMethod.POST)
-    public ResponseEntity<Void> insertProposalClientAddress(@PathVariable Integer id, @Valid @RequestBody newAddressDTO objDto) {
-        Address obj = addressService.fromDTO(objDto);
+    public ResponseEntity<Void> insertProposalClientAddress(@PathVariable Integer id, @Valid @RequestBody NewAddressDTO newAddressDTO) {
+        Address address = addressService.fromDTO(newAddressDTO);
         Proposal proposal = proposalService.find(id);
-        proposal.getClient().setAddress(obj);
-        obj.setClient(proposal.getClient());
+        proposal.getClient().setAddress(address);
+        address.setClient(proposal.getClient());
 
-        addressService.insert(obj);
+        addressService.insert(address);
 
         proposalService.updateStatus(proposal, ProposalStatus.PENDING_CLIENT_DOCUMENTATION);
 
@@ -133,12 +130,12 @@ public class ProposalResource {
             @ApiResponse(code = 500, message = "Unexpected error")
     })
     @RequestMapping(value = "/{id}/address", method = RequestMethod.PUT)
-    public ResponseEntity<Void> editProposalClientAddress(@PathVariable Integer id, @Valid @RequestBody newAddressDTO objDto) {
-        Address obj = addressService.fromDTO(objDto);
+    public ResponseEntity<Void> editProposalClientAddress(@PathVariable Integer id, @Valid @RequestBody NewAddressDTO newAddressDTO) {
+        Address address = addressService.fromDTO(newAddressDTO);
         Proposal proposal = proposalService.find(id);
-        obj.setId(proposal.getClient().getAddress().getId());
+        address.setId(proposal.getClient().getAddress().getId());
 
-        addressService.update(obj);
+        addressService.update(address);
         return ResponseEntity.noContent().build();
     }
 
@@ -158,7 +155,7 @@ public class ProposalResource {
             throw new RegistrationStepException("Step Violation. Proposal status: " + ProposalStatus.toEnum(proposal.getStatus().getCod()));
         }
 
-        service.uploadDocument(proposal, file);
+        proposalService.uploadDocument(proposal, file);
 
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentContextPath()
@@ -178,7 +175,7 @@ public class ProposalResource {
     })
     @RequestMapping(value = "/{id}/document", method = RequestMethod.GET)
     public ResponseEntity<Resource> downloadFile(@PathVariable Integer id) {
-        Proposal proposal = service.find(id);
+        Proposal proposal = proposalService.find(id);
 
         Resource file = storageService.loadAsResource(proposal.getFilename());
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
@@ -194,14 +191,14 @@ public class ProposalResource {
             @ApiResponse(code = 500, message = "Unexpected error")
     })
     @RequestMapping(value = "/{id}/confirm", method = RequestMethod.POST)
-    public ResponseEntity<Void> confirmProposal(@PathVariable Integer id, @RequestBody ProposalConfirmationDTO confirmationDTO) {
-        Proposal proposal = service.find(id);
+    public ResponseEntity<Void> confirmProposal(@PathVariable Integer id, @Valid @RequestBody ProposalConfirmationDTO confirmationDTO) {
+        Proposal proposal = proposalService.find(id);
 
         if (proposal.getStatus().getCod() != ProposalStatus.PENDING_CLIENT_CONFIRMATION.getCod()) {
             throw new RegistrationStepException("Step Violation. Proposal status: " + ProposalStatus.toEnum(proposal.getStatus().getCod()));
         }
 
-        service.updateStatus(proposal, ProposalStatus.PENDING_SYSTEM_ACCEPTANCE);
+        proposalService.updateStatus(proposal, ProposalStatus.PENDING_SYSTEM_ACCEPTANCE);
 
         if (confirmationDTO.getConfirmation()) { // Customer confirmed the proposal
             accountService.requestProposalApproval(proposal);
@@ -222,7 +219,7 @@ public class ProposalResource {
     })
     @RequestMapping(value = "/{id}/confirm-api", method = RequestMethod.POST)
     public ResponseEntity<Void> confirmProposalApi(@PathVariable Integer id, @RequestBody ProposalConfirmationDTO proposalConfirmationDTO) {
-        Proposal proposal = service.find(id);
+        Proposal proposal = proposalService.find(id);
 
         if (proposal.getStatus().getCod() != ProposalStatus.PENDING_SYSTEM_ACCEPTANCE.getCod()) {
             throw new RegistrationStepException("Step Violation. Proposal status: " + ProposalStatus.toEnum(proposal.getStatus().getCod()));
@@ -231,11 +228,11 @@ public class ProposalResource {
         if(proposalConfirmationDTO.getConfirmation()) { // API accepted documentation
             accountService.createAccount(proposal);
             emailService.welcomeNewClient(proposal.getClient());
-            service.updateStatus(proposal, ProposalStatus.IMPLEMENTED);
+            proposalService.updateStatus(proposal, ProposalStatus.IMPLEMENTED);
         } else { // API denied documentation
-            service.updateStatus(proposal, ProposalStatus.CANCELED);
+            proposalService.updateStatus(proposal, ProposalStatus.CANCELED);
         }
-        service.closeProposal(proposal);
+        proposalService.closeProposal(proposal);
 
         return ResponseEntity.ok().build();
     }

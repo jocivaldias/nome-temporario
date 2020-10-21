@@ -1,13 +1,13 @@
 package com.jocivaldias.nossobancodigital.dto;
 
-import com.jocivaldias.nossobancodigital.services.validation.Cep;
+import com.jocivaldias.nossobancodigital.services.validation.ZipCode;
 
 import javax.validation.constraints.NotBlank;
 
-public class newAddressDTO {
+public class NewAddressDTO {
 
     @NotBlank(message = "Can't be blank.")
-    @Cep(message = "Invalid CEP.")
+    @ZipCode(message = "Invalid CEP.")
     private String zipCode;
 
     @NotBlank(message = "Can't be blank.")
@@ -25,10 +25,10 @@ public class newAddressDTO {
     @NotBlank(message = "Can't be blank.")
     private String state;
 
-    public newAddressDTO() {
+    public NewAddressDTO() {
     }
 
-    public newAddressDTO(String zipCode, String streetName, String neighborhoodName, String complement, String city, String state) {
+    public NewAddressDTO(String zipCode, String streetName, String neighborhoodName, String complement, String city, String state) {
         this.zipCode = zipCode;
         this.streetName = streetName;
         this.neighborhoodName = neighborhoodName;

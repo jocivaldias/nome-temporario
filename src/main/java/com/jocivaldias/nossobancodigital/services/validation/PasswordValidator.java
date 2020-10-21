@@ -7,15 +7,15 @@ import javax.validation.ConstraintValidatorContext;
 import java.util.Arrays;
 import java.util.List;
 
-public class SenhaValidator implements ConstraintValidator<Senha, String> {
+public class PasswordValidator implements ConstraintValidator<Password, String> {
 
     @Override
-    public void initialize(final Senha constraintAnnotation) {
+    public void initialize(final Password constraintAnnotation) {
     }
 
     @Override
     public boolean isValid(String senha, final ConstraintValidatorContext context) {
-        PasswordValidator validator = new PasswordValidator(Arrays.asList(
+        org.passay.PasswordValidator validator = new org.passay.PasswordValidator(Arrays.asList(
                 new LengthRule(8, 30),
                 new CharacterRule(EnglishCharacterData.UpperCase, 1),
                 new CharacterRule(EnglishCharacterData.LowerCase, 1),

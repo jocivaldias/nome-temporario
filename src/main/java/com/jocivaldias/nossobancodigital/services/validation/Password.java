@@ -36,29 +36,26 @@
  */
 package com.jocivaldias.nossobancodigital.services.validation;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import javax.validation.Constraint;
+import javax.validation.Payload;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-public class CepValidator implements ConstraintValidator<Cep, String> {
+@Documented
+@Target({ FIELD, METHOD })
+@Retention(RUNTIME)
+@Constraint(validatedBy = PasswordValidator.class)
+public @interface Password {
 
-    @Override
-    public void initialize(final Cep constraintAnnotation) {
-    }
+    Class<?>[] groups() default {};
 
-    @Override
-    public boolean isValid(String cep, final ConstraintValidatorContext context) {
-        boolean result = false;
-        if (cep == null || "".equals(cep)) {
-            result = true;
-        } else {
-            Pattern pattern = Pattern.compile("^(([0-9]{2}\\.[0-9]{3}-[0-9]{3})|([0-9]{2}[0-9]{3}-[0-9]{3})|([0-9]{8}))$");
-            Matcher matcher = pattern.matcher(cep);
-            result = matcher.find();
-        }
-        return result;
-    }
+    String message() default "";
+
+    Class<? extends Payload>[] payload() default {};
 
 }

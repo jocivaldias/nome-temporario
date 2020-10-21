@@ -7,9 +7,9 @@ import org.springframework.mail.SimpleMailMessage;
 
 public interface EmailService {
 
-    void welcomeNewClient(Client obj);
-    void insistCustomerConfirmation(Client obj);
-    void simpleEmail(SimpleMailMessage msg);
+    void welcomeNewClient(Client client);
+    void insistCustomerConfirmation(Client client);
+    void simpleEmail(SimpleMailMessage simpleMailMessage);
     void registerNewPassword(ActivationToken activationToken);
     void updatedPassword(Account account);
 }

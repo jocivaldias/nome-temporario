@@ -75,7 +75,7 @@ public class ResourceExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
     }
 
-    @ExceptionHandler(AprovacaoApiException.class)
+    @ExceptionHandler(ApprovalApiException.class)
     public ResponseEntity<StandardError> aprovacaoApiException(MaxUploadSizeExceededException e, HttpServletRequest request){
         StandardError err = new StandardError(System.currentTimeMillis(), HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 "Validation API error", e.getMessage(), request.getRequestURI());

@@ -1,7 +1,7 @@
 package com.jocivaldias.nossobancodigital.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.jocivaldias.nossobancodigital.services.validation.PropostaUpdate;
+import com.jocivaldias.nossobancodigital.services.validation.ProposalUpdate;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -10,7 +10,7 @@ import javax.validation.constraints.Past;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-@PropostaUpdate
+@ProposalUpdate
 public class ProposalDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 

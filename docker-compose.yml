@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+
+  nossobancodigital-mysql:
+    image: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=nossobancodigital
+      - MYSQL_USER=nossobancodigital-user
+      - MYSQL_PASSWORD=password
+    ports:
+      - 3306:3306

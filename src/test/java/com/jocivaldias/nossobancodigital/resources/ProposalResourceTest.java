@@ -6,12 +6,11 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.jocivaldias.nossobancodigital.domain.Proposal;
 import com.jocivaldias.nossobancodigital.domain.enums.ProposalStatus;
-import com.jocivaldias.nossobancodigital.dto.newAddressDTO;
+import com.jocivaldias.nossobancodigital.dto.NewAddressDTO;
 import com.jocivaldias.nossobancodigital.dto.ProposalConfirmationDTO;
 import com.jocivaldias.nossobancodigital.dto.NewProposalDTO;
 import com.jocivaldias.nossobancodigital.services.DBService;
 import com.jocivaldias.nossobancodigital.services.ProposalService;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -96,7 +95,7 @@ public class ProposalResourceTest {
     public void givenValidAddressNewDTO_whenPostProposalAddress_thenStatus201()
             throws Exception {
 
-        newAddressDTO newAddressDTO = new newAddressDTO();
+        NewAddressDTO newAddressDTO = new NewAddressDTO();
         newAddressDTO.setNeighborhoodName("Bairro");
         newAddressDTO.setZipCode("38400000");
         newAddressDTO.setCity("Uberlândia");
@@ -124,7 +123,7 @@ public class ProposalResourceTest {
     public void givenInvalidAddressNewDTO_whenPostProposalAddress_thenStatus400()
             throws Exception {
 
-        newAddressDTO newAddressDTO = new newAddressDTO();
+        NewAddressDTO newAddressDTO = new NewAddressDTO();
         newAddressDTO.setNeighborhoodName("Bairro");
         newAddressDTO.setZipCode("123");
         newAddressDTO.setCity("Uberlândia");
@@ -151,7 +150,7 @@ public class ProposalResourceTest {
     public void givenValidAddressNewDTO_whenProposalHasAddress_whenPostProposalAddress_thenStatus400()
             throws Exception {
 
-        newAddressDTO newAddressDTO = new newAddressDTO();
+        NewAddressDTO newAddressDTO = new NewAddressDTO();
         newAddressDTO.setNeighborhoodName("Bairro");
         newAddressDTO.setZipCode("123");
         newAddressDTO.setCity("Uberlândia");

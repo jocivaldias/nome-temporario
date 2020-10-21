@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Objects;
 
 @Entity
@@ -32,7 +33,7 @@ public class Account implements Serializable {
     private Proposal proposal;
 
     @Column(nullable = false)
-    private Double balance = 0.00;
+    private BigDecimal balance = BigDecimal.ZERO;
 
     @JsonIgnore
     private String password;
@@ -41,7 +42,7 @@ public class Account implements Serializable {
     }
 
     public Account(Integer id, String branchNumber, String accountNumber, String bankNumber, Proposal proposal,
-                   Double balance, String password) {
+                   BigDecimal balance, String password) {
         this.id = id;
         this.branchNumber = branchNumber;
         this.accountNumber = accountNumber;
@@ -91,11 +92,11 @@ public class Account implements Serializable {
         this.proposal = proposal;
     }
 
-    public Double getBalance() {
+    public BigDecimal getBalance() {
         return balance;
     }
 
-    public void setBalance(Double balance) {
+    public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }
 

@@ -13,6 +13,7 @@ Tabela de conteúdos
    * [Tecnologias Utilizadas](#Tecnologias-Utilizadas)
    * [Executando o aplicativo localmente](#Executando-o-aplicativo-localmente)
    * [Testes](#Testes)
+   * [Questionamentos](#Questionamentos)
    * [Autor](#Autor)
 <!--te-->
 
@@ -58,11 +59,20 @@ O modelo de dados final da aplicação pode ser visto abaixo:
 * 	[git](https://git-scm.com/) - Free and Open-Source distributed version control system
 
 ### Ferramentas externas
+*   [Docker](https://www.docker.com/) - Docker is an open platform for developing, shipping, and running applications.
 * 	[Postman](https://www.getpostman.com/) - API Development Environment (Testing Docmentation)
 
 ## Executando o aplicativo localmente
 
 * O role ativo padrão é **`test`**. No role **`test`**, o aplicativo usa o banco de dados **H2**.
+
+* Em desenvolvimento, o aplicativo utiliza o **MySQL** como banco de dados padrão. Para instanciar o banco de dados em desenvolvimento basta executar o seguinte comando:
+
+```shell
+$ docker-compose up
+```
+
+Alternativamente, você pode configurar manualmente com os seguintes passos:
 
 * Você precisa ter o **MySQL** instalado em sua máquina para executar o aplicativo no role **`dev`**. Usando o `MySQL Workbench` ou em qualquer outro client/console MySQL, crie um banco de dados chamado **nossobancodigital**
 
@@ -117,6 +127,18 @@ Todos os endpoints foram documentados através do `swagger` e pode ser visto ace
 * 	[Swagger](http://localhost:8080/swagger-ui.html) - `http://localhost:8080/swagger-ui.html`- Documentation & Testing
 
 ![endpoints](https://user-images.githubusercontent.com/11140125/96477268-ab6eb980-120c-11eb-9d2a-3b760bbd2349.png)
+
+## Questionamentos
+
+*Será que existe algum jeito melhor de tratar esses uploads do que fazer o arquivo chegar pela aplicação?*
+
+Supondo a situação em que o armazenamento será realizado em um bucket S3 da Amazon e você terá que receber em seu backend para posteriormente enviá-lo ao S3, claramente existe um gargalo que provavelmente será a sua aplicação backend. Neste caso, pode ser gerado uma URL AWS S3 previamente assinada para que seus usuários consigam enviar o arquivo diretamente ao S3. Conforme pode ser visto na referência [1], o ganho de desempenho é substancial (além de reduzir consideravelmente o overhead nos servidores do backend).  Um esquema desse processo pode ser visto na figura [2] abaixo:
+
+![esquema](https://user-images.githubusercontent.com/11140125/96661486-8d937880-1322-11eb-8c84-b4411b780f6c.png)
+
+[1] https://softwareontheroad.com/aws-s3-secure-direct-upload/
+
+[2] https://medium.com/@ashan.fernando/upload-files-to-aws-s3-using-signed-urls-fa0a0cf489db
 
 ## Autor
 

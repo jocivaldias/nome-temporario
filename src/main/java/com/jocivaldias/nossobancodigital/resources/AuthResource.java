@@ -1,6 +1,6 @@
 package com.jocivaldias.nossobancodigital.resources;
 
-import com.jocivaldias.nossobancodigital.dto.registerPasswordDTO;
+import com.jocivaldias.nossobancodigital.dto.RegisterPasswordDTO;
 import com.jocivaldias.nossobancodigital.dto.RequestTokenDTO;
 import com.jocivaldias.nossobancodigital.security.JWTUtil;
 import com.jocivaldias.nossobancodigital.security.UserSS;
@@ -53,7 +53,7 @@ public class AuthResource {
             @ApiResponse(code = 500, message = "Unexpected error")
     })
     @RequestMapping(value="/create-password", method= RequestMethod.POST)
-    public ResponseEntity<Void> createPassword(@Valid @RequestBody registerPasswordDTO registerPasswordDTO){
+    public ResponseEntity<Void> createPassword(@Valid @RequestBody RegisterPasswordDTO registerPasswordDTO){
         authService.savePassword(registerPasswordDTO);
         return ResponseEntity.ok().build();
     }

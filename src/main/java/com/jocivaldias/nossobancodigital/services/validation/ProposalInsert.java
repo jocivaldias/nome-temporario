@@ -7,11 +7,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Constraint(validatedBy = PropostaInsertValidator.class)
+@Constraint(validatedBy = ProposalInsertValidator.class)
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface PropostaInsert {
-    String message() default "Erro de validação";
+public @interface ProposalInsert {
+    String message() default "Validation Error";
 
     Class<?>[] groups() default {};
 

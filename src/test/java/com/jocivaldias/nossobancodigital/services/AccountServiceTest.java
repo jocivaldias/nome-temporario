@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.math.BigDecimal;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -30,11 +31,11 @@ public class AccountServiceTest {
         for (int i = 0; i < 20; i++) {
             executor.execute(() -> {
                 Account aux = accountRepository.findById(1).orElseThrow();
-                accountService.updateBalance(aux, 10.00);
+                accountService.updateBalance(aux, new BigDecimal(10));
             });
             executor.execute(() -> {
                 Account aux = accountRepository.findById(2).orElseThrow();
-                accountService.updateBalance(aux, 5.00);
+                accountService.updateBalance(aux, new BigDecimal(5));
             });
         }
 
@@ -46,9 +47,9 @@ public class AccountServiceTest {
 
         // then
         assertThat(aux.getBalance())
-                .isEqualTo(200.00);
+                .isEqualByComparingTo(new BigDecimal(200));
         assertThat(aux2.getBalance())
-                .isEqualTo(100.00);
+                .isEqualByComparingTo(new BigDecimal(100));
 
     }
 }

@@ -12,20 +12,20 @@ import javax.validation.ConstraintValidatorContext;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PropostaInsertValidator implements ConstraintValidator<PropostaInsert, NewProposalDTO> {
+public class ProposalInsertValidator implements ConstraintValidator<ProposalInsert, NewProposalDTO> {
 
     @Autowired
     private ClientRepository clientRepository;
 
     @Override
-    public void initialize(PropostaInsert ann) {
+    public void initialize(ProposalInsert ann) {
     }
 
     @Override
     public boolean isValid(NewProposalDTO objDto, ConstraintValidatorContext context) {
         List<FieldMessage> list = new ArrayList<>();
 
-        if(!DateUtils.maiorDeIdade(objDto.getBirthdate())){
+        if(objDto.getBirthdate() != null && !DateUtils.ofLegalAge(objDto.getBirthdate())){
             list.add(new FieldMessage("dataNascimento", "Deve ser maior de idade (18 anos)."));
         }
 

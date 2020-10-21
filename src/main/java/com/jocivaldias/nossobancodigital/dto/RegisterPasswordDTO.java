@@ -1,13 +1,13 @@
 package com.jocivaldias.nossobancodigital.dto;
 
-import com.jocivaldias.nossobancodigital.services.validation.Senha;
+import com.jocivaldias.nossobancodigital.services.validation.Password;
 import org.hibernate.validator.constraints.br.CPF;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
-public class registerPasswordDTO implements Serializable {
+public class RegisterPasswordDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @NotBlank(message = "Can't be blank.")
@@ -22,13 +22,13 @@ public class registerPasswordDTO implements Serializable {
     private String token;
 
     @NotBlank(message = "Can't be blank.")
-    @Senha
+    @Password
     private String password;
 
-    public registerPasswordDTO() {
+    public RegisterPasswordDTO() {
     }
 
-    public registerPasswordDTO(String email, String cpf, String token, String password) {
+    public RegisterPasswordDTO(String email, String cpf, String token, String password) {
         this.email = email;
         this.cpf = cpf;
         this.token = token;

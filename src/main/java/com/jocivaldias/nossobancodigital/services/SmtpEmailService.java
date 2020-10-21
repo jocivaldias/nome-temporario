@@ -10,7 +10,7 @@ public class SmtpEmailService extends AbstractEmailService{
     private MailSender mailSender;
 
     @Override
-    public void simpleEmail(SimpleMailMessage msg) {
-        mailSender.send(msg);
+    public void simpleEmail(SimpleMailMessage simpleMailMessage) {
+        mailSender.send(simpleMailMessage);
     }
 }

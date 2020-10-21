@@ -19,11 +19,11 @@ import java.util.List;
 @RequestMapping(value = "/transfers")
 public class TransferResource {
 
-    private final TransferService service;
+    private final TransferService transferService;
 
     @Autowired
     public TransferResource(TransferService transferService) {
-        this.service = transferService;
+        this.transferService = transferService;
     }
 
     @ApiOperation(value = "Receive a list of transfers to execute")
@@ -33,8 +33,8 @@ public class TransferResource {
             @ApiResponse(code = 500, message = "Unexpected error")
     })
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Void> saveAndExecuteTransfers(@Valid @RequestBody List<TransferDTO> listObjDto) {
-        service.processesTransfers(listObjDto);
+    public ResponseEntity<Void> saveAndExecuteTransfers(@Valid @RequestBody List<TransferDTO> transferDTOList) {
+        transferService.processesTransfers(transferDTOList);
         return ResponseEntity.ok().build();
     }
 

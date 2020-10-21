@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class PropostaUpdateValidator implements ConstraintValidator<PropostaUpdate, ProposalDTO> {
+public class ProposalUpdateValidator implements ConstraintValidator<ProposalUpdate, ProposalDTO> {
 
     @Autowired
     private HttpServletRequest request;
@@ -24,7 +24,7 @@ public class PropostaUpdateValidator implements ConstraintValidator<PropostaUpda
     private ClientRepository clientRepository;
 
     @Override
-    public void initialize(PropostaUpdate ann) {
+    public void initialize(ProposalUpdate ann) {
     }
 
     @Override
@@ -34,13 +34,13 @@ public class PropostaUpdateValidator implements ConstraintValidator<PropostaUpda
 
         List<FieldMessage> list = new ArrayList<>();
 
-        if(!DateUtils.maiorDeIdade(objDto.getBirthdate())){
-            list.add(new FieldMessage("dataNascimento", "Deve ser maior de idade (18 anos)."));
+        if(!DateUtils.ofLegalAge(objDto.getBirthdate())){
+            list.add(new FieldMessage("birthDate", "Must be of legal age (18 years)."));
         }
 
         Client aux = clientRepository.findByEmail(objDto.getEmail());
         if( aux != null && !aux.getId().equals(uriId) ){
-            list.add(new FieldMessage("email", "E-mail já existente."));
+            list.add(new FieldMessage("email", "Existing email."));
         }
 
         for (FieldMessage e : list) {

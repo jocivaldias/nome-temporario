@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,7 +31,7 @@ public class AccountRepositoryTest {
         Proposal p1 = new Proposal(null);
         Client cli1 = new Client(null, "Exemplo", "De Cliente 001", "exemplo001@email.com", LocalDate.of(2000,01,01), "50451229088");
         Address e1 = new Address(null, "38400000", "Rua Exemplo 001", "Bairo exemplo 001", "complemento 001", "Cidade 001", "Estado 001");
-        Account account = new Account(null, "0000", "00000000", "341", p1, 0.00, "testesenha");
+        Account account = new Account(null, "0000", "00000000", "341", p1, BigDecimal.ZERO, "testesenha");
         p1.setClient(cli1);
         cli1.setProposal(p1);
         cli1.setAddress(e1);
@@ -60,7 +61,7 @@ public class AccountRepositoryTest {
         Proposal p1 = new Proposal(null);
         Client cli1 = new Client(null, "Exemplo", "De Cliente 001", "exemplo001@email.com", LocalDate.of(2000,01,01), "50451229088");
         Address e1 = new Address(null, "38400000", "Rua Exemplo 001", "Bairo exemplo 001", "complemento 001", "Cidade 001", "Estado 001");
-        Account account = new Account(null, "0000", "00000000", "341", p1, 0.00, "testesenha");
+        Account account = new Account(null, "0000", "00000000", "341", p1, BigDecimal.ZERO, "testesenha");
         p1.setClient(cli1);
         cli1.setProposal(p1);
         cli1.setAddress(e1);

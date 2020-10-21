@@ -19,45 +19,45 @@ import java.util.Optional;
 @Service
 public class ProposalService {
 
-    private final ProposalRepository repo;
+    private final ProposalRepository proposalRepository;
     private final StorageService storageService;
 
     @Value("${document.prefix}")
     private String prefix;
 
     @Autowired
-    public ProposalService(ProposalRepository repo, StorageService storageService) {
-        this.repo = repo;
+    public ProposalService(ProposalRepository proposalRepository, StorageService storageService) {
+        this.proposalRepository = proposalRepository;
         this.storageService = storageService;
     }
 
     public Proposal find(Integer id){
-        Optional<Proposal> obj = repo.findById(id);
-        return obj.orElseThrow(() -> new ObjectNotFoundException(
+        Optional<Proposal> proposal = proposalRepository.findById(id);
+        return proposal.orElseThrow(() -> new ObjectNotFoundException(
                 "Proposal not found! Id: " + id + ", Type: " + Proposal.class.getName()
         ));
     }
 
-    public Proposal insert(Proposal obj){
-        obj.setId(null);
-        return repo.save(obj);
+    public Proposal insert(Proposal proposal){
+        proposal.setId(null);
+        return proposalRepository.save(proposal);
     }
 
-    public Proposal update(Proposal obj) {
-        Proposal newObj = find(obj.getId());
-        updateClientData(newObj, obj);
-        return repo.save(newObj);
+    public Proposal update(Proposal proposal) {
+        Proposal saveProposal = find(proposal.getId());
+        updateClientData(saveProposal, proposal);
+        return proposalRepository.save(saveProposal);
     }
 
     public void updateStatus(Proposal proposal, ProposalStatus status) {
         Proposal newObj = find(proposal.getId());
         newObj.setStatus(status);
-        repo.save(newObj);
+        proposalRepository.save(newObj);
     }
 
     public void uploadDocument(Proposal proposal, MultipartFile file) {
-        String ext = FilenameUtils.getExtension(file.getOriginalFilename());
-        String fileName = prefix + proposal.getId() + "." + ext;
+        String extension = FilenameUtils.getExtension(file.getOriginalFilename());
+        String fileName = prefix + proposal.getId() + "." + extension;
 
         storageService.store(file, fileName);
 
@@ -65,20 +65,20 @@ public class ProposalService {
             proposal.setStatus(ProposalStatus.PENDING_CLIENT_CONFIRMATION);
         }
         proposal.setFilename(fileName);
-        repo.save(proposal);
+        proposalRepository.save(proposal);
     }
 
     public Proposal closeProposal(Proposal proposal) {
-        Proposal newObj = find(proposal.getId());
-        newObj.setProposalClosingDate(LocalDate.now());
-        return repo.save(newObj);
+        Proposal saveProposal = find(proposal.getId());
+        saveProposal.setProposalClosingDate(LocalDate.now());
+        return proposalRepository.save(saveProposal);
     }
 
-    public Proposal fromDTO(NewProposalDTO objDto) {
+    public Proposal fromDTO(NewProposalDTO newProposalDTO) {
         Proposal proposal = new Proposal(null);
 
-        Client client = new Client(null, objDto.getName(), objDto.getLastName(), objDto.getEmail(),
-                objDto.getBirthdate(), objDto.getCpf());
+        Client client = new Client(null, newProposalDTO.getName(), newProposalDTO.getLastName(), newProposalDTO.getEmail(),
+                newProposalDTO.getBirthdate(), newProposalDTO.getCpf());
 
         proposal.setClient(client);
         client.setProposal(proposal);
@@ -86,14 +86,14 @@ public class ProposalService {
         return proposal;
     }
 
-    public Proposal fromDTO(ProposalDTO objDto) {
+    public Proposal fromDTO(ProposalDTO proposalDTO) {
         Proposal proposal = new Proposal(null);
 
         Client client = new Client();
-        client.setName(objDto.getName());
-        client.setLastName(objDto.getLastName());
-        client.setEmail(objDto.getEmail());
-        client.setBirthdate(objDto.getBirthdate());
+        client.setName(proposalDTO.getName());
+        client.setLastName(proposalDTO.getLastName());
+        client.setEmail(proposalDTO.getEmail());
+        client.setBirthdate(proposalDTO.getBirthdate());
 
         client.setProposal(proposal);
         proposal.setClient(client);
@@ -101,11 +101,11 @@ public class ProposalService {
         return proposal;
     }
 
-    private void updateClientData(Proposal newObj, Proposal obj) {
-        newObj.getClient().setName(obj.getClient().getName());
-        newObj.getClient().setLastName(obj.getClient().getLastName());
-        newObj.getClient().setEmail(obj.getClient().getEmail());
-        newObj.getClient().setBirthdate(obj.getClient().getBirthdate());
+    private void updateClientData(Proposal toProposal, Proposal fromProposal) {
+        toProposal.getClient().setName(fromProposal.getClient().getName());
+        toProposal.getClient().setLastName(fromProposal.getClient().getLastName());
+        toProposal.getClient().setEmail(fromProposal.getClient().getEmail());
+        toProposal.getClient().setBirthdate(fromProposal.getClient().getBirthdate());
     }
 
 }

@@ -18,43 +18,43 @@ import java.util.List;
 public class TransferService {
     private static final Logger logger = LoggerFactory.getLogger(TransferService.class);
 
-    private final TransferRepository repo;
+    private final TransferRepository transferRepository;
     private final AccountRepository accountRepository;
     private final AccountService accountService;
 
     @Autowired
-    public TransferService(TransferRepository repo, AccountRepository accountRepository,
+    public TransferService(TransferRepository transferRepository, AccountRepository accountRepository,
                            AccountService accountService) {
-        this.repo = repo;
+        this.transferRepository = transferRepository;
         this.accountRepository = accountRepository;
         this.accountService = accountService;
     }
 
-    public Transfer insert(Transfer obj){
-        obj.setId(null);
-        return repo.save(obj);
+    public Transfer insert(Transfer transfer){
+        transfer.setId(null);
+        return transferRepository.save(transfer);
     }
 
-    public Transfer fromDTO(TransferDTO objDto) {
+    public Transfer fromDTO(TransferDTO transferDTO) {
         Transfer transfer = new Transfer();
 
         transfer.setId(null);
-        transfer.setOriginBranchNumber(objDto.getOriginBranchNumber());
-        transfer.setOriginBankNumber(objDto.getOriginBankNumber());
-        transfer.setOriginAccountNumber(objDto.getOriginAccountNumber());
-        transfer.setTransferDate(objDto.getTransferDate());
-        transfer.setIdentifierDocument(objDto.getIdentifierDocument());
-        transfer.setTransferIdOriginBank(objDto.getTransferIdOriginBank());
-        transfer.setTransferValue(objDto.getTransferValue());
+        transfer.setOriginBranchNumber(transferDTO.getOriginBranchNumber());
+        transfer.setOriginBankNumber(transferDTO.getOriginBankNumber());
+        transfer.setOriginAccountNumber(transferDTO.getOriginAccountNumber());
+        transfer.setTransferDate(transferDTO.getTransferDate());
+        transfer.setIdentifierDocument(transferDTO.getIdentifierDocument());
+        transfer.setTransferIdOriginBank(transferDTO.getTransferIdOriginBank());
+        transfer.setTransferValue(transferDTO.getTransferValue());
 
-        Account account = accountRepository.findByBranchNumberAndAccountNumber(objDto.getTargetBranchNumber(), objDto.getTargetAccountNumber());
+        Account account = accountRepository.findByBranchNumberAndAccountNumber(transferDTO.getTargetBranchNumber(), transferDTO.getTargetAccountNumber());
 
         // Account does not exist in our bank
         if( account == null){
             logger.info("Account not found in our bank: {"
-                    +objDto.getTargetBranchNumber()
+                    +transferDTO.getTargetBranchNumber()
                     + ", "
-                    + objDto.getTargetAccountNumber()
+                    + transferDTO.getTargetAccountNumber()
                     + "}.");
             return null;
         }
@@ -64,18 +64,19 @@ public class TransferService {
     }
 
     @Async
-    @Transactional
-    public void processesTransfers(List<TransferDTO> listObjDto) {
-        for(TransferDTO x: listObjDto){
-            Transfer transfer = fromDTO(x);
-            if(transfer != null) {
-                try {
-                    insert(transfer);
-                    accountService.updateBalance(transfer.getTargetAccount(), transfer.getTransferValue());
-                } catch (Exception ex){
-                    logger.info("Transfer already registered, error: " + ex.getMessage());
+    public void processesTransfers(List<TransferDTO> transferDTOList) {
+        transferDTOList.stream().forEach(
+                transferDTO -> {
+                    Transfer transfer = fromDTO(transferDTO);
+                    if(transfer != null) {
+                        try {
+                            insert(transfer);
+                            accountService.updateBalance(transfer.getTargetAccount(), transfer.getTransferValue());
+                        } catch (Exception ex){
+                            logger.info("Transfer already registered, error: " + ex.getMessage());
+                        }
+                    }
                 }
-            }
-        }
+        );
     }
 }

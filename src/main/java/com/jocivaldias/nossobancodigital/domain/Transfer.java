@@ -4,13 +4,14 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
-//@Table(uniqueConstraints={
-//        @UniqueConstraint(columnNames = {"id_unico_banco_transferencia", "codigo_banco_origem"})
-//})
+@Table(uniqueConstraints={
+        @UniqueConstraint(columnNames = {"transfer_id_origin_bank", "origin_bank_number"})
+})
 public class Transfer implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -19,7 +20,7 @@ public class Transfer implements Serializable {
     private Long id;
 
     @Column(nullable = false)
-    private Double transferValue;
+    private BigDecimal transferValue;
 
     @Column(nullable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone="America/Sao_Paulo")
@@ -28,7 +29,7 @@ public class Transfer implements Serializable {
     @Column(nullable = false)
     private String identifierDocument;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "origin_bank_number")
     private String originBankNumber;
 
     @Column(nullable = false)
@@ -37,7 +38,7 @@ public class Transfer implements Serializable {
     @Column(nullable = false)
     private String originBranchNumber;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "transfer_id_origin_bank")
     private Long transferIdOriginBank;
 
     @ManyToOne
@@ -46,7 +47,7 @@ public class Transfer implements Serializable {
     public Transfer() {
     }
 
-    public Transfer(Long id, Double transferValue, LocalDate transferDate, String identifierDocument,
+    public Transfer(Long id, BigDecimal transferValue, LocalDate transferDate, String identifierDocument,
                     String originBankNumber, String originAccountNumber, String originBranchNumber,
                     Long transferIdOriginBank, Account accountDestino) {
         this.id = id;
@@ -68,11 +69,11 @@ public class Transfer implements Serializable {
         this.id = id;
     }
 
-    public Double getTransferValue() {
+    public BigDecimal getTransferValue() {
         return transferValue;
     }
 
-    public void setTransferValue(Double transferValue) {
+    public void setTransferValue(BigDecimal transferValue) {
         this.transferValue = transferValue;
     }
 

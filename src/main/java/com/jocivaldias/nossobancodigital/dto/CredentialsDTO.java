@@ -1,6 +1,6 @@
 package com.jocivaldias.nossobancodigital.dto;
 
-import com.jocivaldias.nossobancodigital.services.validation.Senha;
+import com.jocivaldias.nossobancodigital.services.validation.Password;
 
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
@@ -12,7 +12,7 @@ public class CredentialsDTO implements Serializable {
     private String branchNumber;
     @NotBlank(message = "Can't be blank.")
     private String accountNumber;
-    @Senha
+    @Password
     private String password;
 
     public CredentialsDTO() {

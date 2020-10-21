@@ -7,6 +7,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class TransferDTO implements Serializable {
@@ -14,7 +15,7 @@ public class TransferDTO implements Serializable {
 
     @NotNull(message = "Can't be blank.")
     @Min(0)
-    private Double transferValue;
+    private BigDecimal transferValue;
 
     @NotNull(message = "Can't be blank.")
     @PastOrPresent
@@ -45,11 +46,11 @@ public class TransferDTO implements Serializable {
     public TransferDTO() {
     }
 
-    public Double getTransferValue() {
+    public BigDecimal getTransferValue() {
         return transferValue;
     }
 
-    public void setTransferValue(Double transferValue) {
+    public void setTransferValue(BigDecimal transferValue) {
         this.transferValue = transferValue;
     }
 
